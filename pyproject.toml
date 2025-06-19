@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "website-analyzer"
+version = "1.0.0"
+description = "GUI application for downloading and analyzing websites"
+readme = "README.md"
+authors = [{name = "Website Analyzer Team"}]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup :: HTML",
+]
+requires-python = ">=3.7"
+dependencies = [
+    "requests>=2.28.0",
+    "beautifulsoup4>=4.11.0",
+    "lxml>=4.9.0",
+]
+
+[project.scripts]
+website-analyzer = "website_analyzer.main:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/website-analyzer"
+Repository = "https://github.com/yourusername/website-analyzer"
+Documentation = "https://github.com/yourusername/website-analyzer#readme"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
