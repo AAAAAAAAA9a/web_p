@@ -1,109 +1,196 @@
-# Website Analyzer - Analizator Witryn WWW
+# Analizator Stron Internetowych
 
-Profesjonalna aplikacja GUI do pobierania, przeglądania i analizy witryn internetowych z modularną strukturą projektu.
+**Autor**: [Twoje Imię i Nazwisko]  
+**Przedmiot**: [Nazwa Przedmiotu]  
+**Rok akademicki**: 2024/2025
 
-## Funkcje
+## Opis projektu
 
-- **Pobieranie witryn WWW**: Rekursywne pobieranie z konfigurowalnną głębokością (1-5 poziomów)
-- **Analiza zawartości**: Szczegółowa analiza linków, obrazów, statystyk i częstotliwości słów
-- **Przeglądanie stron**: Wbudowana przeglądarka z trybem kodu źródłowego i tekstu
-- **Zarządzanie danymi**: Zapisywanie/wczytywanie projektów z metadanymi
-- **Eksport raportów**: Generowanie szczegółowych raportów analitycznych
+Aplikacja GUI w języku Python do pobierania i analizowania stron internetowych. Projekt demonstruje programowanie obiektowe, interfejsy graficzne oraz przetwarzanie danych.
 
-## Struktura Projektu
+## Funkcjonalności
+
+1. **Pobieranie stron** - rekursywne pobieranie witryn z kontrolą głębokości
+2. **Analiza zawartości** - statystyki, linki, obrazy, częstotliwość słów
+3. **Przeglądanie** - wyświetlanie pobranych stron z kodem źródłowym
+4. **Zarządzanie danymi** - zapisywanie i wczytywanie projektów
+
+## Technologie
+
+- **Python 3.7+** - język programowania
+- **tkinter** - interfejs graficzny (GUI)
+- **requests** - pobieranie stron HTTP
+- **BeautifulSoup** - parsowanie HTML
+- **lxml** - parser XML/HTML
+
+## Struktura projektu
 
 ```
-website_analyzer/
-├── src/
-│   └── website_analyzer/
-│       ├── core/                 # Logika biznesowa
-│       │   ├── downloader.py     # Pobieranie witryn
-│       │   ├── analyzer.py       # Analiza zawartości
-│       │   └── file_manager.py   # Zarządzanie plikami
-│       └── gui/                  # Interfejs użytkownika
-│           ├── main_window.py    # Główne okno aplikacji
-│           ├── download_tab.py   # Zakładka pobierania
-│           ├── analysis_tab.py   # Zakładka analizy
-│           └── browse_tab.py     # Zakładka przeglądania
-├── tests/                        # Testy jednostkowe
-├── docs/                         # Dokumentacja
-├── assets/                       # Zasoby (ikony, obrazy)
-├── main.py                       # Punkt wejścia aplikacji
-├── setup.py                      # Instalator
-├── pyproject.toml               # Konfiguracja projektu
-└── requirements.txt             # Zależności
+src/website_analyzer/
+├── core/                    # Logika biznesowa
+│   ├── downloader.py       # Klasa do pobierania stron
+│   ├── analyzer.py         # Klasa do analizy danych
+│   └── file_manager.py     # Zarządzanie plikami
+├── gui/                     # Interfejs użytkownika
+│   ├── main_window.py      # Główne okno
+│   ├── download_tab.py     # Zakładka pobierania
+│   ├── analysis_tab.py     # Zakładka analizy
+│   └── browse_tab.py       # Zakładka przeglądania
+└── __init__.py
+main.py                      # Uruchomienie aplikacji
+tests/                       # Testy jednostkowe
+pyproject.toml              # Konfiguracja projektu
 ```
 
-## Instalacja
+## Instalacja i uruchomienie
 
-### Standardowa instalacja
+### Krok 1: Przygotowanie środowiska
 ```bash
-# Klonuj repozytorium
-git clone https://github.com/yourusername/website-analyzer.git
+# Klonuj projekt
+git clone [adres-repo]
 cd website-analyzer
 
-# Zainstaluj zależności
-pip install -r requirements.txt
+# Utwórz środowisko wirtualne
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# lub
+venv\Scripts\activate     # Windows
+```
 
-# Uruchom aplikację
+### Krok 2: Instalacja zależności
+```bash
+pip install -e .
+```
+
+### Krok 3: Uruchomienie
+```bash
 python main.py
 ```
 
-### Instalacja deweloperska
+## Instrukcja użycia
+
+### 1. Pobieranie strony
+- Wprowadź URL w polu "URL"
+- Ustaw głębokość pobierania (1-5 poziomów)
+- Ustaw maksymalną liczbę stron
+- Kliknij "🌐 Download Website"
+
+### 2. Analiza danych
+- Przejdź do zakładki "📊 Analysis"
+- Kliknij "🔍 Analyze Website"
+- Przeglądaj wyniki w trzech kategoriach:
+  - **Statystyki** - podstawowe dane liczbowe
+  - **Linki** - analiza odnośników
+  - **Obrazy** - analiza grafik
+
+### 3. Przeglądanie
+- Zakładka "📖 Browse" pozwala:
+  - Przeglądać listę pobranych stron
+  - Wyświetlać kod źródłowy HTML
+  - Wyświetlać czysty tekst
+
+### 4. Zarządzanie projektami
+- **Zapisz na dysk** - eksport danych do folderu
+- **Wczytaj z dysku** - import wcześniej zapisanych danych
+- **Eksportuj raport** - generowanie raportu tekstowego
+
+## Wzorce projektowe użyte w kodzie
+
+1. **Separacja warstw** - podział na logikę biznesową (core) i interfejs (gui)
+2. **Observer/Callback** - informowanie o postępie operacji
+3. **Dependency Injection** - przekazywanie zależności między klasami
+4. **Facade** - uproszczony interfejs do skomplikowanych operacji
+
+## Testowanie
+
 ```bash
-# Zainstaluj w trybie development
-pip install -e .
-
-# Uruchom aplikację
-website-analyzer
-```
-
-## Użycie
-
-### 1. Zakładka "Pobieranie / Download"
-- **URL witryny**: Wprowadź adres do pobrania (http/https)
-- **Głębokość pobierania**: Ustaw poziomy rekursji (1-5)
-- **Maksymalna liczba stron**: Ogranicz liczbę pobranych stron
-- **Opcje zapisu**: Zapisz na dysk lub wczytaj wcześniej pobrany projekt
-
-### 2. Zakładka "Analiza / Analysis"
-- **Statystyki**: Podstawowe metryki witryny, kody HTTP, analiza słów
-- **Linki**: Kategoryzacja linków (wewnętrzne, zewnętrzne, email)
-- **Obrazy**: Analiza obrazów według typów i rozszerzeń
-- **Eksport**: Generowanie raportów w formacie tekstowym
-
-### 3. Zakładka "Przeglądanie / Browse"
-- **Wybór strony**: Lista wszystkich pobranych stron
-- **Tryb wyświetlania**: Kod źródłowy HTML lub czysty tekst
-- **Nawigacja**: Szybkie przełączanie między stronami
-
-## Rozwój i Testowanie
-
-```bash
-# Uruchom testy
+# Uruchom wszystkie testy
 python -m pytest tests/
 
-# Uruchom konkretny test
+# Test konkretnego modułu
 python -m pytest tests/test_downloader.py
 
-# Analiza pokrycia kodu
-pip install pytest-cov
+# Test z pokryciem kodu
 python -m pytest --cov=src/website_analyzer tests/
 ```
 
-## Wymagania Techniczne
+## Dokumentacja
 
-- **Python**: 3.7+ 
-- **GUI**: tkinter (standardowa biblioteka)
-- **HTTP**: requests >= 2.28.0
-- **Parsing**: beautifulsoup4 >= 4.11.0, lxml >= 4.9.0
-- **System**: Windows, Linux, MacOS
+Automatyczne generowanie dokumentacji HTML z docstrings:
 
-## Architektura
+```bash
+# Wygeneruj dokumentację (automatycznie otwiera w przeglądarce)
+python generate_docs.py
 
-Aplikacja wykorzystuje wzorzec **separacji warstw**:
-- **Core**: Logika biznesowa niezależna od GUI
-- **GUI**: Komponenty interfejsu użytkownika
-- **Main**: Punkt wejścia i konfiguracja aplikacji
+# Dokumentacja zostanie zapisana w folderze docs/
+```
 
-Komunikacja między warstwami odbywa się przez wzorzec **callback** dla operacji asynchronicznych i **dependency injection** dla współdzielenia stanu.
+Dokumentacja zawiera:
+- Opis wszystkich klas i metod
+- Parametry funkcji i typy zwracane
+- Przykłady użycia z docstrings
+- Strukturę pakietów i modułów
+
+## Tworzenie pliku wykonywalnego (.exe)
+
+Dla użytkowników Windows - tworzenie standalone aplikacji:
+
+```bash
+# Automatyczne tworzenie pliku .exe (Windows)
+python build_exe.py
+
+# Plik zostanie utworzony w folderze release/
+```
+
+### Instrukcja manualna:
+
+```bash
+# 1. Zainstaluj PyInstaller
+pip install pyinstaller
+
+# 2. Utwórz plik wykonywalny
+pyinstaller --onefile --windowed --name="WebsiteAnalyzer" main.py
+
+# 3. Plik .exe będzie w folderze dist/
+```
+
+### Cechy utworzonego pliku .exe:
+- **Standalone** - nie wymaga instalacji Pythona
+- **Brak konsoli** - uruchamia się bezpośrednio GUI
+- **Rozmiar** - około 50-80 MB
+- **Kompatybilność** - Windows 7/8/10/11
+
+## Przykład użycia w kodzie
+
+```python
+from src.website_analyzer.core.downloader import WebsiteDownloader
+from src.website_analyzer.core.analyzer import WebsiteAnalyzer
+
+# Pobieranie strony
+downloader = WebsiteDownloader(max_pages=10, max_depth=2)
+pages = downloader.download_website("https://example.com")
+
+# Analiza danych
+analyzer = WebsiteAnalyzer()
+results = analyzer.analyze_pages(pages)
+print(results['stats'])
+```
+
+## Problemy znane i ograniczenia
+
+- Aplikacja może działać wolno dla dużych witryn
+- Brak obsługi JavaScript (tylko statyczny HTML)
+- Rate limiting może spowalniać pobieranie
+- GUI zoptimalizowane dla rozdzielczości 1200x800+
+
+## TODO / Przyszłe ulepszenia
+
+- [ ] Dodanie obsługi robots.txt
+- [ ] Implementacja wielowątkowości dla pobierania
+- [ ] Eksport do formatów CSV/JSON
+- [ ] Zaawansowane filtry analizy
+- [ ] Obsługa cookies i sesji
+
+## Licencja
+
+Projekt edukacyjny - MIT License

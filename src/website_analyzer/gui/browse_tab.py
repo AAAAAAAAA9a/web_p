@@ -108,10 +108,9 @@ class BrowseTab:
                 soup = BeautifulSoup(content, 'html.parser')
                 text_content = soup.get_text(separator='\n', strip=True)
                 self.page_viewer.insert(1.0, text_content)
-            except ImportError:
-                self.page_viewer.insert(1.0, "Błąd: Nie można wyświetlić tekstu (brak biblioteki BeautifulSoup)")
-            except Exception as e:
-                self.page_viewer.insert(1.0, f"Błąd podczas przetwarzania tekstu: {str(e)}")
+            except Exception:
+                # Jeśli nie można przetworzyć HTML, pokaż surową zawartość
+                self.page_viewer.insert(1.0, content)
                 
     def update_view(self):
         """Update the view when view mode changes."""

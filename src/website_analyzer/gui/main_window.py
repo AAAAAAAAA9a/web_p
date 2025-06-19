@@ -1,5 +1,5 @@
 """
-Main application window.
+Główne okno aplikacji.
 """
 
 import tkinter as tk
@@ -10,54 +10,86 @@ from typing import Dict, Optional
 from ..core.downloader import WebsiteDownloader
 from ..core.analyzer import WebsiteAnalyzer
 from ..core.file_manager import FileManager
+from ..core.error_handler import set_global_logger, handle_error
 from .download_tab import DownloadTab
 from .analysis_tab import AnalysisTab
 from .browse_tab import BrowseTab
 
 
 class MainWindow:
-    """Main application window containing all tabs and functionality."""
+    """Główne okno aplikacji zawierające wszystkie zakładki i funkcjonalności."""
     
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Website Analyzer - Analizator Witryn WWW")
-        self.root.geometry("1000x700")
+        self.root.geometry("1200x800")
+        self.root.minsize(900, 600)
         
-        # Core components
+        # Skonfiguruj obsługę błędów
+        set_global_logger(self._log_message)
+        
+        # Skonfiguruj nowoczesny motyw
+        self.setup_theme()
+        
+        # Główne komponenty
         self.downloader = WebsiteDownloader()
         self.analyzer = WebsiteAnalyzer()
         self.file_manager = FileManager()
         
-        # Data storage
+        # Przechowywanie danych
         self.downloaded_pages: Dict[str, Dict] = {}
         self.current_analysis: Dict[str, str] = {}
         
         self.setup_ui()
         
+    def setup_theme(self):
+        """Konfiguruje nowoczesny motyw GUI."""
+        style = ttk.Style()
+        
+        # Spróbuj użyć nowoczesnego motywu jeśli dostępny
+        available_themes = style.theme_names()
+        if 'clam' in available_themes:
+            style.theme_use('clam')
+        elif 'alt' in available_themes:
+            style.theme_use('alt')
+            
+        # Konfiguruj kolory
+        style.configure('TNotebook', borderwidth=0)
+        style.configure('TNotebook.Tab', padding=[20, 10])
+        
+        # Konfiguruj styl przycisków
+        style.configure('Accent.TButton', 
+                       foreground='white',
+                       background='#0078d4',
+                       borderwidth=0,
+                       focuscolor='none')
+        style.map('Accent.TButton',
+                 background=[('active', '#106ebe')])
+        
     def setup_ui(self):
-        """Set up the main user interface."""
-        # Main notebook for tabs
+        """Konfiguruje główny interfejs użytkownika."""
+        # Główny notebook dla zakładek
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill='both', expand=True, padx=10, pady=10)
         
-        # Create tabs
+        # Utwórz zakładki
         self.download_tab = DownloadTab(self.notebook, self)
         self.analysis_tab = AnalysisTab(self.notebook, self)
         self.browse_tab = BrowseTab(self.notebook, self)
         
-        # Add tabs to notebook
-        self.notebook.add(self.download_tab.frame, text="Pobieranie / Download")
-        self.notebook.add(self.analysis_tab.frame, text="Analiza / Analysis")
-        self.notebook.add(self.browse_tab.frame, text="Przeglądanie / Browse")
+        # Dodaj zakładki do notebooka
+        self.notebook.add(self.download_tab.frame, text="🌐 Download")
+        self.notebook.add(self.analysis_tab.frame, text="📊 Analysis")
+        self.notebook.add(self.browse_tab.frame, text="📖 Browse")
         
     def start_download(self, url: str, max_depth: int, max_pages: int):
         """
-        Start downloading a website in a separate thread.
+        Rozpoczyna pobieranie strony internetowej w osobnym wątku.
         
         Args:
-            url: URL to start downloading from
-            max_depth: Maximum depth to crawl
-            max_pages: Maximum number of pages to download
+            url: URL do rozpoczęcia pobierania
+            max_depth: Maksymalna głębokość przeszukiwania
+            max_pages: Maksymalna liczba stron do pobrania
         """
         if not url:
             messagebox.showerror("Błąd", "Proszę podać URL witryny")
@@ -66,11 +98,11 @@ class MainWindow:
         if not url.startswith(('http://', 'https://')):
             url = 'https://' + url
             
-        # Update downloader settings
+        # Zaktualizuj ustawienia downloadera
         self.downloader.max_pages = max_pages
         self.downloader.max_depth = max_depth
         
-        # Start download in separate thread
+        # Rozpocznij pobieranie w osobnym wątku
         thread = threading.Thread(
             target=self._download_worker, 
             args=(url,)
@@ -79,58 +111,63 @@ class MainWindow:
         thread.start()
         
     def _download_worker(self, url: str):
-        """Worker method for downloading in separate thread."""
+        """Metoda robocza do pobierania w osobnym wątku."""
+        self.download_tab.set_downloading(True)
+        
         try:
-            self.download_tab.set_downloading(True)
-            
-            def progress_callback(message: str):
-                self.download_tab.log_message(message)
-                
             self.downloaded_pages = self.downloader.download_website(
-                url, progress_callback
+                url, self._log_message
             )
-            
-            # Update UI on main thread
             self.root.after(0, self._download_completed)
-            
         except Exception as e:
-            error_msg = f"Błąd podczas pobierania: {str(e)}"
-            self.root.after(0, lambda: self.download_tab.log_message(error_msg))
+            error_msg = handle_error("pobierania", e)
             self.root.after(0, lambda: self.download_tab.set_downloading(False))
             
     def _download_completed(self):
-        """Called when download is completed."""
+        """Wywoływana gdy pobieranie zostało zakończone."""
         self.download_tab.set_downloading(False)
         self.browse_tab.update_page_list(list(self.downloaded_pages.keys()))
         
     def analyze_website(self):
-        """Analyze the downloaded website data."""
+        """Analizuje pobrane dane strony internetowej."""
         if not self.downloaded_pages:
             messagebox.showwarning("Brak danych", "Najpierw pobierz witrynę")
             return
             
+        # Rozpocznij analizę w osobnym wątku
+        thread = threading.Thread(target=self._analysis_worker)
+        thread.daemon = True
+        thread.start()
+        
+    def _analysis_worker(self):
+        """Metoda robocza do analizy w osobnym wątku."""
+        self.root.after(0, lambda: self.analysis_tab.set_analyzing(True))
+        self._log_message("Rozpoczynam analizę witryny...")
+        
         try:
-            self.download_tab.log_message("Rozpoczynam analizę witryny...")
-            
-            self.current_analysis = self.analyzer.analyze_pages(self.downloaded_pages)
-            self.analysis_tab.display_analysis(self.current_analysis)
-            
-            self.download_tab.log_message("Analiza zakończona!")
-            
+            self.current_analysis = self.analyzer.analyze_pages(
+                self.downloaded_pages, self._log_message
+            )
+            self.root.after(0, self._analysis_completed)
         except Exception as e:
-            error_msg = f"Błąd podczas analizy: {str(e)}"
-            messagebox.showerror("Błąd", error_msg)
-            self.download_tab.log_message(error_msg)
+            handle_error("analizy", e, show_gui=True)
+            self.root.after(0, lambda: self.analysis_tab.set_analyzing(False))
+            
+    def _analysis_completed(self):
+        """Wywoływana gdy analiza została zakończona."""
+        self.analysis_tab.set_analyzing(False)
+        self.analysis_tab.display_analysis(self.current_analysis)
+        self.download_tab.log_message("Analiza zakończona!")
             
     def save_website(self, folder_path: str) -> bool:
         """
-        Save downloaded website data to disk.
+        Zapisuje pobrane dane strony internetowej na dysk.
         
         Args:
-            folder_path: Directory to save the data
+            folder_path: Katalog do zapisania danych
             
         Returns:
-            True if successful, False otherwise
+            True jeśli operacja się powiodła, False w przeciwnym razie
         """
         if not self.downloaded_pages:
             messagebox.showwarning("Brak danych", "Najpierw pobierz witrynę")
@@ -140,13 +177,13 @@ class MainWindow:
         
     def save_analysis_report(self, filepath: str) -> bool:
         """
-        Save analysis report to file.
+        Zapisuje raport analizy do pliku.
         
         Args:
-            filepath: Path to save the report
+            filepath: Ścieżka do zapisania raportu
             
         Returns:
-            True if successful, False otherwise
+            True jeśli operacja się powiodła, False w przeciwnym razie
         """
         if not self.current_analysis:
             messagebox.showwarning("Brak analizy", "Najpierw wykonaj analizę witryny")
@@ -156,13 +193,13 @@ class MainWindow:
         
     def load_website(self, folder_path: str) -> bool:
         """
-        Load previously saved website data.
+        Wczytuje wcześniej zapisane dane strony internetowej.
         
         Args:
-            folder_path: Directory containing saved data
+            folder_path: Katalog zawierający zapisane dane
             
         Returns:
-            True if successful, False otherwise
+            True jeśli operacja się powiodła, False w przeciwnym razie
         """
         loaded_data = self.file_manager.load_website_data(folder_path)
         if loaded_data:
@@ -174,14 +211,22 @@ class MainWindow:
         
     def get_page_content(self, url: str) -> Optional[str]:
         """
-        Get content of a specific page.
+        Pobiera zawartość konkretnej strony.
         
         Args:
-            url: URL of the page
+            url: URL strony
             
         Returns:
-            Page content or None if not found
+            Zawartość strony lub None jeśli nie znaleziono
         """
         if url in self.downloaded_pages:
             return self.downloaded_pages[url]['content']
         return None
+    
+    def _log_message(self, message: str):
+        """Centralny punkt logowania wiadomości."""
+        # Bezpiecznie wywołaj w głównym wątku
+        if threading.current_thread() == threading.main_thread():
+            self.download_tab.log_message(message)
+        else:
+            self.root.after(0, lambda: self.download_tab.log_message(message))

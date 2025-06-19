@@ -1,67 +1,66 @@
 """
-File management utilities for saving and loading website data.
+Narzędzia do zarządzania plikami - zapisywanie i wczytywanie danych stron internetowych.
 """
 
 import os
 import json
 from typing import Dict, Optional
 
+from .error_handler import handle_file_error, safe_execute
+
 
 class FileManager:
-    """Handles saving and loading of website data."""
+    """Obsługuje zapisywanie i wczytywanie danych stron internetowych."""
     
     def __init__(self):
-        pass
+        """Inicjalizuje menedżer plików."""
+        self.default_encoding = 'utf-8'
         
     def save_website_data(self, downloaded_pages: Dict[str, Dict], folder_path: str) -> bool:
         """
-        Save downloaded website data to disk.
+        Zapisuje pobrane dane strony internetowej na dysk.
         
         Args:
-            downloaded_pages: Dictionary of page data to save
-            folder_path: Directory path to save files
+            downloaded_pages: Słownik z danymi stron do zapisania
+            folder_path: Ścieżka do katalogu zapisu plików
             
         Returns:
-            True if successful, False otherwise
+            True jeśli operacja się powiodła, False w przeciwnym razie
         """
-        try:
-            if not os.path.exists(folder_path):
-                os.makedirs(folder_path)
+        success, _ = safe_execute(self._do_save_website_data, downloaded_pages, folder_path)
+        return success
+    
+    def _do_save_website_data(self, downloaded_pages: Dict[str, Dict], folder_path: str):
+        """Wykonuje faktyczne zapisywanie danych."""
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+            
+        # Zapisz poszczególne strony
+        for i, (url, page_data) in enumerate(downloaded_pages.items()):
+            filename = f"page_{i+1:03d}.html"
+            filepath = os.path.join(folder_path, filename)
+            
+            with open(filepath, 'w', encoding=self.default_encoding) as f:
+                f.write(f"<!-- URL: {url} -->\n")
+                f.write(f"<!-- Status: {page_data['status_code']} -->\n")
+                f.write(f"<!-- Size: {page_data['size']} bytes -->\n")
+                f.write(page_data['content'])
                 
-            # Save individual pages
-            for i, (url, page_data) in enumerate(downloaded_pages.items()):
-                filename = f"page_{i+1:03d}.html"
-                filepath = os.path.join(folder_path, filename)
-                
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    f.write(f"<!-- URL: {url} -->\n")
-                    f.write(f"<!-- Status: {page_data['status_code']} -->\n")
-                    f.write(f"<!-- Size: {page_data['size']} bytes -->\n")
-                    f.write(page_data['content'])
-                    
-            # Save index file
-            self._save_index_file(downloaded_pages, folder_path)
-            
-            # Save metadata
-            self._save_metadata(downloaded_pages, folder_path)
-            
-            return True
-            
-        except Exception as e:
-            print(f"Error saving website data: {e}")
-            return False
+        # Zapisz plik indeksu i metadane
+        self._save_index_file(downloaded_pages, folder_path)
+        self._save_metadata(downloaded_pages, folder_path)
             
     def _save_index_file(self, downloaded_pages: Dict[str, Dict], folder_path: str):
-        """Save index file mapping filenames to URLs."""
+        """Zapisuje plik indeksu mapujący nazwy plików na URL."""
         index_path = os.path.join(folder_path, "index.txt")
-        with open(index_path, 'w', encoding='utf-8') as f:
+        with open(index_path, 'w', encoding=self.default_encoding) as f:
             f.write("INDEKS POBRANYCH STRON / DOWNLOADED PAGES INDEX\n")
             f.write("="*60 + "\n\n")
             for i, (url, page_data) in enumerate(downloaded_pages.items(), 1):
                 f.write(f"page_{i:03d}.html - {url} - {page_data['status_code']} - {page_data['size']} bytes\n")
                 
     def _save_metadata(self, downloaded_pages: Dict[str, Dict], folder_path: str):
-        """Save metadata as JSON for programmatic access."""
+        """Zapisuje metadane jako JSON do programowego dostępu."""
         metadata = {
             'total_pages': len(downloaded_pages),
             'total_size': sum(page['size'] for page in downloaded_pages.values()),
@@ -78,79 +77,74 @@ class FileManager:
             }
             
         metadata_path = os.path.join(folder_path, "metadata.json")
-        with open(metadata_path, 'w', encoding='utf-8') as f:
+        with open(metadata_path, 'w', encoding=self.default_encoding) as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
             
     def save_analysis_report(self, analysis_data: Dict[str, str], filepath: str) -> bool:
         """
-        Save analysis report to a text file.
+        Zapisuje raport analizy do pliku tekstowego.
         
         Args:
-            analysis_data: Dictionary containing analysis results
-            filepath: Path to save the report
+            analysis_data: Słownik zawierający wyniki analizy
+            filepath: Ścieżka do zapisania raportu
             
         Returns:
-            True if successful, False otherwise
+            True jeśli operacja się powiodła, False w przeciwnym razie
         """
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write("RAPORT ANALIZY WITRYNY / WEBSITE ANALYSIS REPORT\n")
-                f.write("="*60 + "\n\n")
-                
-                if 'stats' in analysis_data:
-                    f.write(analysis_data['stats'])
-                    
-                if 'links' in analysis_data:
-                    f.write("\n\n" + analysis_data['links'])
-                    
-                if 'images' in analysis_data:
-                    f.write("\n\n" + analysis_data['images'])
-                    
-            return True
+        success, _ = safe_execute(self._write_report, analysis_data, filepath)
+        return success
+    
+    def _write_report(self, analysis_data: Dict[str, str], filepath: str):
+        """Zapisuje raport do pliku."""
+        with open(filepath, 'w', encoding=self.default_encoding) as f:
+            f.write("RAPORT ANALIZY WITRYNY / WEBSITE ANALYSIS REPORT\n")
+            f.write("="*60 + "\n\n")
             
-        except Exception as e:
-            print(f"Error saving analysis report: {e}")
-            return False
+            for section in ['stats', 'links', 'images']:
+                if section in analysis_data:
+                    if section != 'stats':
+                        f.write("\n\n")
+                    f.write(analysis_data[section])
             
     def load_website_data(self, folder_path: str) -> Optional[Dict[str, Dict]]:
         """
-        Load previously saved website data.
+        Wczytuje wcześniej zapisane dane strony internetowej.
         
         Args:
-            folder_path: Directory containing saved website data
+            folder_path: Katalog zawierający zapisane dane strony
             
         Returns:
-            Dictionary of loaded page data or None if failed
+            Słownik z wczytanymi danymi stron lub None jeśli operacja się nie powiodła
         """
-        try:
-            metadata_path = os.path.join(folder_path, "metadata.json")
-            if not os.path.exists(metadata_path):
-                return None
-                
-            with open(metadata_path, 'r', encoding='utf-8') as f:
-                metadata = json.load(f)
-                
-            downloaded_pages = {}
+        success, result = safe_execute(self._do_load_website_data, folder_path)
+        return result if success else None
+    
+    def _do_load_website_data(self, folder_path: str) -> Dict[str, Dict]:
+        """Wykonuje faktyczne wczytywanie danych."""
+        metadata_path = os.path.join(folder_path, "metadata.json")
+        if not os.path.exists(metadata_path):
+            raise FileNotFoundError(f"Brak pliku metadanych: {metadata_path}")
             
-            for filename, page_info in metadata['pages'].items():
-                filepath = os.path.join(folder_path, filename)
-                if os.path.exists(filepath):
-                    with open(filepath, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        # Remove HTML comments we added
-                        lines = content.split('\n')
-                        content = '\n'.join(lines[3:])  # Skip first 3 comment lines
-                        
-                    downloaded_pages[page_info['url']] = {
-                        'content': content,
-                        'status_code': page_info['status_code'],
-                        'headers': page_info['headers'],
-                        'url': page_info['url'],
-                        'size': page_info['size']
-                    }
+        with open(metadata_path, 'r', encoding=self.default_encoding) as f:
+            metadata = json.load(f)
+            
+        downloaded_pages = {}
+        
+        for filename, page_info in metadata['pages'].items():
+            filepath = os.path.join(folder_path, filename)
+            if os.path.exists(filepath):
+                with open(filepath, 'r', encoding=self.default_encoding) as f:
+                    content = f.read()
+                    # Usuń komentarze HTML które dodaliśmy
+                    lines = content.split('\n')
+                    content = '\n'.join(lines[3:])  # Pomiń pierwsze 3 linie komentarzy
                     
-            return downloaded_pages
-            
-        except Exception as e:
-            print(f"Error loading website data: {e}")
-            return None
+                downloaded_pages[page_info['url']] = {
+                    'content': content,
+                    'status_code': page_info['status_code'],
+                    'headers': page_info['headers'],
+                    'url': page_info['url'],
+                    'size': page_info['size']
+                }
+                
+        return downloaded_pages

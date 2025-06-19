@@ -31,17 +31,43 @@ python -m pytest --cov=src/website_analyzer tests/
 
 ### Installation
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Development installation
+# Install package with dependencies
 pip install -e .
+
+# Or install from PyPI (when published)
+pip install website-analyzer
 ```
 
-### Linting and Formatting
+### Development Setup
 ```bash
-# Note: No linting tools configured yet
-# Consider adding: black, flake8, mypy
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Install with documentation tools
+pip install -e ".[docs]"
+
+# Install with build tools (PyInstaller)
+pip install -e ".[build]"
+
+# Install everything
+pip install -e ".[dev,docs,build]"
+
+# Run linting
+black src/ tests/
+flake8 src/ tests/
+mypy src/
+
+# Run tests with coverage
+pytest --cov=src/website_analyzer tests/
+```
+
+### Building Executable
+```bash
+# Create Windows .exe file
+python build_exe.py
+
+# Manual PyInstaller command
+pyinstaller --onefile --windowed --name="WebsiteAnalyzer" main.py
 ```
 
 ## Project Architecture
@@ -52,7 +78,7 @@ pip install -e .
   - `gui/` - GUI components (main_window, tabs)
 - `tests/` - Unit tests
 - `main.py` - Application entry point
-- `setup.py` & `pyproject.toml` - Package configuration
+- `pyproject.toml` - Package configuration (modern TOML format)
 
 ### Key Components
 
@@ -108,5 +134,13 @@ When modifying this codebase:
 ## Configuration
 
 - `.claude/settings.local.json` - Claude Code permissions
-- `requirements.txt` - Python dependencies
-- `setup.py` & `pyproject.toml` - Package configuration
+- `pyproject.toml` - Package configuration (modern TOML format)
+- `.gitignore` - Git ignore rules (includes build artifacts like *.egg-info/)
+
+## Build Artifacts
+
+The following directories are automatically generated during development and should NOT be committed:
+- `src/*.egg-info/` - Package metadata (created by `pip install -e .`)
+- `__pycache__/` - Python bytecode cache
+- `venv/` - Virtual environment
+- `build/`, `dist/` - Build outputs
