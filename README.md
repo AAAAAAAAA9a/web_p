@@ -121,19 +121,6 @@ python main.py
 3. **Dependency Injection** - przekazywanie zależności między klasami
 4. **Facade** - uproszczony interfejs do skomplikowanych operacji
 
-## Testowanie
-
-```bash
-# Uruchom wszystkie testy
-python -m pytest tests/
-
-# Test konkretnego modułu
-python -m pytest tests/test_downloader.py
-
-# Test z pokryciem kodu
-python -m pytest --cov=src/website_analyzer tests/
-```
-
 ## Dokumentacja
 
 Automatyczne generowanie dokumentacji HTML z docstrings:
