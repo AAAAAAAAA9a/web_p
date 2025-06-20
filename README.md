@@ -1,12 +1,12 @@
 # Analizator Stron Internetowych
 
-**Autor**: [Twoje Imię i Nazwisko]  
-**Przedmiot**: [Nazwa Przedmiotu]  
+**Autor**: [Artur Lisowski, Julia Kusztal]  
+**Przedmiot**: [Aplikacje Sieciowe]  
 **Rok akademicki**: 2024/2025
 
 ## Opis projektu
 
-Aplikacja GUI w języku Python do pobierania i analizowania stron internetowych. Projekt demonstruje programowanie obiektowe, interfejsy graficzne oraz przetwarzanie danych.
+Aplikacja GUI w języku Python do pobierania i analizowania stron internetowych.
 
 ## Funkcjonalności
 
@@ -48,11 +48,11 @@ pyproject.toml              # Konfiguracja projektu
 ```bash
 # Klonuj projekt
 git clone [adres-repo]
-cd website-analyzer
+cd src\website_analyzer
 
 # Utwórz środowisko wirtualne
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
+source venv/bin/activat  # Linux/Mac
 # lub
 venv\Scripts\activate     # Windows
 ```
@@ -125,12 +125,6 @@ python generate_docs.py
 # Dokumentacja zostanie zapisana w folderze docs/
 ```
 
-Dokumentacja zawiera:
-- Opis wszystkich klas i metod
-- Parametry funkcji i typy zwracane
-- Przykłady użycia z docstrings
-- Strukturę pakietów i modułów
-
 ## Tworzenie pliku wykonywalnego (.exe)
 
 Dla użytkowników Windows - tworzenie standalone aplikacji:
@@ -153,12 +147,6 @@ pyinstaller --onefile --windowed --name="WebsiteAnalyzer" main.py
 
 # 3. Plik .exe będzie w folderze dist/
 ```
-
-### Cechy utworzonego pliku .exe:
-- **Standalone** - nie wymaga instalacji Pythona
-- **Brak konsoli** - uruchamia się bezpośrednio GUI
-- **Rozmiar** - około 50-80 MB
-- **Kompatybilność** - Windows 7/8/10/11
 
 ## Przykład użycia w kodzie
 

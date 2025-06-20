@@ -5,8 +5,8 @@ Analizator Stron Internetowych - Główny plik uruchomieniowy
 Ten plik uruchamia aplikację GUI do analizy stron internetowych.
 Aplikacja pobiera strony z internetu, analizuje ich zawartość i generuje raporty.
 
-Autor: [Twoje Imię i Nazwisko]
-Przedmiot: [Nazwa Przedmiotu] 
+Autor: [Artur Lisowski, Julia Kusztal]
+Przedmiot: [Aplikacje sieciowe] 
 Rok: 2024/2025
 """
 

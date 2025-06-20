@@ -15,5 +15,5 @@ Projekt studencki demonstrujący:
 """
 
 __version__ = "1.0.0"
-__author__ = "[Twoje Imię i Nazwisko]"
+__author__ = "[Artur Lisowski, Julia Kusztal]"
 __description__ = "Aplikacja GUI do analizy stron internetowych - projekt studencki"
