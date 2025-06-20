@@ -76,11 +76,10 @@ class MainWindow:
         self.download_tab = DownloadTab(self.notebook, self)
         self.analysis_tab = AnalysisTab(self.notebook, self)
         self.browse_tab = BrowseTab(self.notebook, self)
-        
-        # Dodaj zakładki do notebooka
-        self.notebook.add(self.download_tab.frame, text="🌐 Download")
-        self.notebook.add(self.analysis_tab.frame, text="📊 Analysis")
-        self.notebook.add(self.browse_tab.frame, text="📖 Browse")
+          # Dodaj zakładki do notebooka
+        self.notebook.add(self.download_tab.frame, text="🌐 Pobieranie")
+        self.notebook.add(self.analysis_tab.frame, text="📊 Analiza")
+        self.notebook.add(self.browse_tab.frame, text="📖 Przeglądanie")
         
     def start_download(self, url: str, max_depth: int, max_pages: int):
         """

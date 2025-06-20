@@ -37,8 +37,7 @@ class WebsiteAnalyzer:
         
         # Podstawowe statystyki
         total_pages = len(downloaded_pages)
-        total_size = sum(page['size'] for page in downloaded_pages.values())
-          # KROK 1: Przygotuj listy do zbierania danych z wszystkich stron
+        total_size = sum(page['size'] for page in downloaded_pages.values())          # KROK 1: Przygotuj listy do zbierania danych z wszystkich stron
         all_links = []      # wszystkie linki ze wszystkich stron
         all_images = []     # wszystkie obrazy ze wszystkich stron
         all_videos = []     # wszystkie filmy ze wszystkich stron
@@ -55,57 +54,56 @@ class WebsiteAnalyzer:
             content = page_data['content']
             status_codes.append(page_data['status_code'])
             
-            # Parse HTML only once per page
+            # Parsuj HTML tylko raz na stronę
             soup = BeautifulSoup(content, 'html.parser')
             
-            # Extract links
+            # Wyciągnij linki
             for link in soup.find_all('a', href=True):
                 href = link.get('href')
                 if href:
-                    all_links.append(str(href))
-                  # Extract images
+                    all_links.append(str(href))                  # Wyciągnij obrazy
             for img in soup.find_all('img', src=True):
                 src = img.get('src')
                 if src:
                     all_images.append(str(src))
             
-            # Extract videos
+            # Wyciągnij filmy
             for video in soup.find_all('video', src=True):
                 src = video.get('src')
                 if src:
                     all_videos.append(str(src))
             
-            # Extract video sources
+            # Wyciągnij źródła filmów
             for source in soup.find_all('source', src=True):
                 src = source.get('src')
                 if src and any(ext in src.lower() for ext in ['.mp4', '.webm', '.avi', '.mov']):
                     all_videos.append(str(src))
             
-            # Extract audio
+            # Wyciągnij pliki audio
             for audio in soup.find_all('audio', src=True):
                 src = audio.get('src')
                 if src:
                     all_audio.append(str(src))
             
-            # Extract audio sources
+            # Wyciągnij źródła plików audio
             for source in soup.find_all('source', src=True):
                 src = source.get('src')
                 if src and any(ext in src.lower() for ext in ['.mp3', '.wav', '.ogg', '.m4a']):
                     all_audio.append(str(src))
             
-            # Extract CSS files
+            # Wyciągnij pliki CSS
             for link in soup.find_all('link', rel='stylesheet'):
                 href = link.get('href')
                 if href:
                     all_css.append(str(href))
             
-            # Extract JavaScript files
+            # Wyciągnij pliki JavaScript
             for script in soup.find_all('script', src=True):
                 src = script.get('src')
                 if src:
                     all_js.append(str(src))
             
-            # Extract document links from <a> tags
+            # Wyciągnij linki do dokumentów z tagów <a>
             for link in soup.find_all('a', href=True):
                 href = link.get('href')
                 if href and any(ext in href.lower() for ext in ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar']):
@@ -117,14 +115,13 @@ class WebsiteAnalyzer:
             all_words.extend(word for word in words if len(word) >= self.min_word_length)
             
         if progress_callback:
-            progress_callback("Generuję statystyki...")
-              # Generate statistics
+            progress_callback("Generuję statystyki...")              # Wygeneruj statystyki
         word_freq = Counter(all_words)
         stats = self._generate_statistics(
             total_pages, total_size, status_codes, all_links, all_images, 
             all_videos, all_audio, all_css, all_js, all_documents, word_freq        )
         
-        # Generate detailed analyses
+        # Wygeneruj szczegółowe analizy
         if progress_callback:
             progress_callback("Analizuję linki...")
         links_analysis = self._analyze_links(all_links)
@@ -186,7 +183,7 @@ Media:
 - Pliki JavaScript: {len(set(all_js))}
 - Dokumenty: {len(set(all_documents))}
 
-Najczęściej używane słowa:
+Najczęstsze słowa:
 """
         
         # Wyświetl najczęstsze słowa
@@ -204,8 +201,7 @@ Najczęściej używane słowa:
         """Analizuje linki znalezione na stronie internetowej."""
         links_analysis = "ANALIZA LINKÓW / LINKS ANALYSIS\n" + "="*50 + "\n\n"
         unique_links = set(all_links)
-        
-        # Kategoryzuj linki
+          # Skategoryzuj linki
         internal_links = []
         external_links = []
         email_links = []
@@ -241,7 +237,7 @@ Najczęściej używane słowa:
         images_analysis = "ANALIZA OBRAZÓW / IMAGES ANALYSIS\n" + "="*50 + "\n\n"
         unique_images = set(all_images)
         
-        # Kategoryzuj według rozszerzenia
+        # Skategoryzuj według rozszerzenia
         extensions = {}
         for img in unique_images:
             ext = img.split('.')[-1].lower() if '.' in img else 'unknown'
@@ -294,8 +290,7 @@ Najczęściej używane słowa:
             for css in sorted(unique_css)[:self.max_media_per_type]:
                 resources_analysis += f"  {css}\n"
             resources_analysis += "\n"
-        
-        # Analiza JavaScript
+          # Analiza JavaScript
         unique_js = set(all_js)
         if unique_js:
             resources_analysis += f"PLIKI JAVASCRIPT ({len(unique_js)}):\n"
@@ -313,8 +308,7 @@ Najczęściej używane słowa:
         documents_analysis = "ANALIZA DOKUMENTÓW / DOCUMENTS ANALYSIS\n" + "="*50 + "\n\n"
         
         unique_docs = set(all_documents)
-        if unique_docs:
-            # Kategoryzuj według rozszerzenia
+        if unique_docs:            # Skategoryzuj według rozszerzenia
             extensions = {}
             for doc in unique_docs:
                 ext = doc.split('.')[-1].lower() if '.' in doc else 'unknown'
@@ -333,5 +327,3 @@ Najczęściej używane słowa:
             documents_analysis += "Nie znaleziono dokumentów do pobrania.\n"
             
         return documents_analysis
-        
-        return media_analysis

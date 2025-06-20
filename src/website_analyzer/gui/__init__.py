@@ -1,3 +1,3 @@
 """
-GUI components for the Website Analyzer application.
+Komponenty GUI dla aplikacji Analizator Stron Internetowych.
 """

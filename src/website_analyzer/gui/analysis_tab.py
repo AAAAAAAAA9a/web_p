@@ -25,9 +25,8 @@ class AnalysisTab:
         # Główny kontener z paddingiem
         main_container = ttk.Frame(self.frame)
         main_container.pack(fill='both', expand=True, padx=20, pady=15)
-        
-        # Sekcja kontroli analizy
-        control_section = ttk.LabelFrame(main_container, text="Analysis Controls", padding=15)
+          # Sekcja kontroli analizy
+        control_section = ttk.LabelFrame(main_container, text="Kontrola Analizy", padding=15)
         control_section.pack(fill='x', pady=(0, 15))
         
         control_frame = ttk.Frame(control_section)
@@ -72,9 +71,8 @@ class AnalysisTab:
         self.download_status_var = tk.StringVar(value="Ready to download")
         ttk.Label(download_section, textvariable=self.download_status_var, 
                  font=('TkDefaultFont', 8)).pack(fill='x', pady=(10, 0))
-        
-        # Sekcja wyników analizy
-        results_section = ttk.LabelFrame(main_container, text="Analysis Results", padding=10)
+          # Sekcja wyników analizy
+        results_section = ttk.LabelFrame(main_container, text="Wyniki Analizy", padding=10)
         results_section.pack(fill='both', expand=True)
         
         # Notebook wyników analizy
@@ -196,8 +194,7 @@ class AnalysisTab:
         if filename:
             if self.main_window.save_analysis_report(filename):
                 messagebox.showinfo("Sukces", f"Raport zapisany: {filename}")
-            else:
-                messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
+            else:                messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
                 
     def download_resource(self):
         """Pobiera zasób z podanego URL na dysk."""
@@ -207,69 +204,67 @@ class AnalysisTab:
         
         url = self.resource_url_var.get().strip()
         if not url:
-            messagebox.showwarning("Warning", "Please enter a resource URL")
+            messagebox.showwarning("Ostrzeżenie", "Proszę wprowadzić URL zasobu")
             return
-            
-        # Sprawdź czy URL jest poprawny
+              # Sprawdź czy URL jest poprawny
         try:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
-                messagebox.showerror("Error", "Invalid URL format")
+                messagebox.showerror("Błąd", "Nieprawidłowy format URL")
                 return
         except Exception:
-            messagebox.showerror("Error", "Invalid URL format")
+            messagebox.showerror("Błąd", "Nieprawidłowy format URL")
             return
-            
-        # Wybór miejsca zapisu
+              # Wybór miejsca zapisu
         try:
             # Spróbuj odgadnąć nazwę pliku z URL
             filename = os.path.basename(parsed.path) or "downloaded_resource"
             if not filename or filename == "/":
-                filename = "downloaded_resource"            # Wybór pliku do zapisu
+                filename = "downloaded_resource"
+            
+            # Wybór pliku do zapisu
             filepath = filedialog.asksaveasfilename(
-                title="Save Resource As",
+                title="Zapisz Zasób Jako",
                 defaultextension=os.path.splitext(filename)[1] or ".bin",
                 filetypes=[
-                    ("All files", "*.*"),
-                    ("Images", "*.jpg *.jpeg *.png *.gif *.svg *.webp"),
-                    ("Documents", "*.pdf *.doc *.docx *.xls *.xlsx"),
+                    ("Wszystkie pliki", "*.*"),
+                    ("Obrazy", "*.jpg *.jpeg *.png *.gif *.svg *.webp"),
+                    ("Dokumenty", "*.pdf *.doc *.docx *.xls *.xlsx"),
                     ("Media", "*.mp4 *.webm *.mp3 *.wav"),
-                    ("Web files", "*.css *.js *.html")
-                ]
+                    ("Pliki webowe", "*.css *.js *.html")                ]
             )
             
             if not filepath:
                 return  # Użytkownik anulował
                 
         except Exception as e:
-            messagebox.showerror("Error", f"File selection error: {str(e)}")
+            messagebox.showerror("Błąd", f"Błąd wyboru pliku: {str(e)}")
             return
             
         # Pobierz plik
-        self.download_status_var.set("Downloading...")
+        self.download_status_var.set("Pobieranie...")
         self.download_btn.config(state='disabled')
         
         try:
             response = requests.get(url, timeout=30, stream=True)
             response.raise_for_status()
-            
-            # Zapisz plik
+              # Zapisz plik
             with open(filepath, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     if chunk:
                         f.write(chunk)
                         
             file_size = os.path.getsize(filepath)
-            self.download_status_var.set(f"✅ Downloaded: {os.path.basename(filepath)} ({file_size:,} bytes)")
-            messagebox.showinfo("Success", f"Resource downloaded successfully!\nSaved to: {filepath}")
+            self.download_status_var.set(f"✅ Pobrano: {os.path.basename(filepath)} ({file_size:,} bajtów)")
+            messagebox.showinfo("Sukces", f"Zasób pobrano pomyślnie!\nZapisano do: {filepath}")
             
         except requests.RequestException as e:
-            self.download_status_var.set(f"❌ Download failed: {str(e)}")
-            messagebox.showerror("Download Error", f"Failed to download resource:\n{str(e)}")
+            self.download_status_var.set(f"❌ Pobieranie nieudane: {str(e)}")
+            messagebox.showerror("Błąd Pobierania", f"Nie udało się pobrać zasobu:\n{str(e)}")
             
         except Exception as e:
-            self.download_status_var.set(f"❌ Error: {str(e)}")
-            messagebox.showerror("Error", f"An error occurred:\n{str(e)}")
+            self.download_status_var.set(f"❌ Błąd: {str(e)}")
+            messagebox.showerror("Błąd", f"Wystąpił błąd:\n{str(e)}")
             
         finally:
             self.download_btn.config(state='normal')
@@ -279,8 +274,7 @@ class AnalysisTab:
         # Sprawdź która zakładka jest aktywna
         current_tab = self.analysis_notebook.select()
         tab_text = self.analysis_notebook.tab(current_tab, "text")
-        
-        # Określ który widget tekstu użyć
+          # Określ który widget tekstu użyć
         if "Statistics" in tab_text:
             text_widget = self.stats_text
         elif "Links" in tab_text:
@@ -294,29 +288,28 @@ class AnalysisTab:
         elif "Documents" in tab_text:
             text_widget = self.documents_text
         else:
-            messagebox.showinfo("Info", "No analysis results available")
+            messagebox.showinfo("Info", "Brak dostępnych wyników analizy")
             return
             
         # Sprawdź czy jest zaznaczony tekst
         try:
             selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
-            if selected_text:
-                # Spróbuj wyciągnąć URL z zaznaczonego tekstu
+            if selected_text:                # Spróbuj wyciągnąć URL z zaznaczonego tekstu
                 import re
                 url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
                 urls = re.findall(url_pattern, selected_text)
                 if urls:
                     self.resource_url_var.set(urls[0])
-                    self.download_status_var.set(f"📋 URL copied: {urls[0][:50]}...")
+                    self.download_status_var.set(f"📋 URL skopiowany: {urls[0][:50]}...")
                 else:
                     # Jeśli nie ma URL, sprawdź czy to ścieżka relatywna
                     if selected_text.startswith(('/', './')):
-                        messagebox.showinfo("Info", "Relative path detected. Please add the domain manually.")
+                        messagebox.showinfo("Info", "Wykryto ścieżkę względną. Proszę dodać domenę ręcznie.")
                         self.resource_url_var.set(selected_text)
                     else:
-                        messagebox.showwarning("Warning", "No valid URL found in selected text")
+                        messagebox.showwarning("Ostrzeżenie", "Nie znaleziono prawidłowego URL w zaznaczonym tekście")
             else:
-                messagebox.showinfo("Info", "Please select a URL or file path from the analysis results")
+                messagebox.showinfo("Info", "Proszę zaznaczyć URL lub ścieżkę pliku z wyników analizy")
                 
         except tk.TclError:
-            messagebox.showinfo("Info", "Please select a URL or file path from the analysis results")
+            messagebox.showinfo("Info", "Proszę zaznaczyć URL lub ścieżkę pliku z wyników analizy")

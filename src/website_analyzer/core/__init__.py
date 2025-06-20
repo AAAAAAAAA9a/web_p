@@ -1,3 +1,3 @@
 """
-Core functionality for website downloading and analysis.
+Podstawowa funkcjonalność do pobierania i analizy stron internetowych.
 """

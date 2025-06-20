@@ -26,9 +26,8 @@ class DownloadTab:
         # Główny kontener z paddingiem
         main_container = ttk.Frame(self.frame)
         main_container.pack(fill='both', expand=True, padx=20, pady=15)
-        
-        # Sekcja wprowadzania URL
-        url_section = ttk.LabelFrame(main_container, text="Website URL", padding=15)
+          # Sekcja wprowadzania URL
+        url_section = ttk.LabelFrame(main_container, text="URL Witryny", padding=15)
         url_section.pack(fill='x', pady=(0, 15))
         
         url_frame = ttk.Frame(url_section)
@@ -37,9 +36,8 @@ class DownloadTab:
         ttk.Label(url_frame, text="URL:").pack(side='left')
         self.url_entry = ttk.Entry(url_frame, width=50, font=('', 10))
         self.url_entry.pack(side='left', fill='x', expand=True, padx=(10, 0))
-        
-        # Sekcja opcji pobierania
-        options_section = ttk.LabelFrame(main_container, text="Download Settings", padding=15)
+          # Sekcja opcji pobierania
+        options_section = ttk.LabelFrame(main_container, text="Ustawienia Pobierania", padding=15)
         options_section.pack(fill='x', pady=(0, 15))
         
         options_grid = ttk.Frame(options_section)
