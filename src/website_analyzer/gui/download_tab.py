@@ -48,41 +48,39 @@ class DownloadTab:
         left_col.pack(side='left', fill='x', expand=True)
         
         self.download_depth = tk.IntVar(value=2)
-        ttk.Label(left_col, text="Crawl Depth:").pack(anchor='w')
+        ttk.Label(left_col, text="Głębokość Crawlingu:").pack(anchor='w')
         depth_frame = ttk.Frame(left_col)
         depth_frame.pack(fill='x', pady=(5, 0))
         ttk.Spinbox(depth_frame, from_=1, to=5, width=10, 
                    textvariable=self.download_depth).pack(side='left')
-        ttk.Label(depth_frame, text="levels", foreground='gray').pack(side='left', padx=(5, 0))
+        ttk.Label(depth_frame, text="poziomów", foreground='gray').pack(side='left', padx=(5, 0))
         
         # Prawa kolumna
         right_col = ttk.Frame(options_grid)
         right_col.pack(side='left', fill='x', expand=True, padx=(30, 0))
         
         self.max_pages = tk.IntVar(value=50)
-        ttk.Label(right_col, text="Max Pages:").pack(anchor='w')
+        ttk.Label(right_col, text="Maks. Stron:").pack(anchor='w')
         pages_frame = ttk.Frame(right_col)
         pages_frame.pack(fill='x', pady=(5, 0))
         ttk.Spinbox(pages_frame, from_=1, to=500, width=10, 
                    textvariable=self.max_pages).pack(side='left')
-        ttk.Label(pages_frame, text="pages", foreground='gray').pack(side='left', padx=(5, 0))
-        
-        # Sekcja przycisków akcji
-        actions_section = ttk.LabelFrame(main_container, text="Actions", padding=15)
+        ttk.Label(pages_frame, text="stron", foreground='gray').pack(side='left', padx=(5, 0))
+          # Sekcja przycisków akcji
+        actions_section = ttk.LabelFrame(main_container, text="Akcje", padding=15)
         actions_section.pack(fill='x', pady=(0, 15))
         
         button_frame = ttk.Frame(actions_section)
-        button_frame.pack(fill='x')
-        
-        self.download_btn = ttk.Button(button_frame, text="🌐 Download Website", 
+        button_frame.pack(fill='x')        
+        self.download_btn = ttk.Button(button_frame, text="🌐 Pobierz Witrynę", 
                                      command=self.start_download, style='Accent.TButton')
         self.download_btn.pack(side='left', padx=(0, 10))
         
-        self.save_btn = ttk.Button(button_frame, text="💾 Save to Disk", 
+        self.save_btn = ttk.Button(button_frame, text="💾 Zapisz na Dysk", 
                                  command=self.save_website)
         self.save_btn.pack(side='left', padx=5)
         
-        self.load_btn = ttk.Button(button_frame, text="📁 Load from Disk", 
+        self.load_btn = ttk.Button(button_frame, text="📁 Wczytaj z Dysku", 
                                  command=self.load_website)
         self.load_btn.pack(side='left', padx=5)
         
@@ -91,7 +89,7 @@ class DownloadTab:
         self.progress.pack(side='right')
         
         # Sekcja dziennika statusu
-        log_section = ttk.LabelFrame(main_container, text="Download Log", padding=10)
+        log_section = ttk.LabelFrame(main_container, text="Dziennik Pobierania", padding=10)
         log_section.pack(fill='both', expand=True)
         
         self.status_text = scrolledtext.ScrolledText(log_section, height=12, 

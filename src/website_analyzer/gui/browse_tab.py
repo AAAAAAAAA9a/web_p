@@ -1,5 +1,5 @@
 """
-Browse tab GUI component.
+Komponent GUI dla zakładki przeglądania.
 """
 
 import tkinter as tk
@@ -11,18 +11,17 @@ if TYPE_CHECKING:
 
 
 class BrowseTab:
-    """GUI tab for browsing downloaded pages."""
+    """Zakładka GUI do przeglądania pobranych stron."""
     
     def __init__(self, parent: ttk.Notebook, main_window: 'MainWindow'):
         self.parent = parent
         self.main_window = main_window
         self.frame = ttk.Frame(parent)
         
-        self.setup_ui()
-        
+        self.setup_ui()        
     def setup_ui(self):
-        """Set up the browse tab UI."""
-        # Page selector
+        """Konfiguracja interfejsu użytkownika zakładki przeglądania."""
+        # Selektor stron
         selector_frame = ttk.Frame(self.frame)
         selector_frame.pack(fill='x', pady=5)
         
@@ -30,7 +29,8 @@ class BrowseTab:
         self.page_combo = ttk.Combobox(selector_frame, state='readonly')
         self.page_combo.pack(side='left', fill='x', expand=True, padx=5)
         self.page_combo.bind('<<ComboboxSelected>>', self.show_page)
-          # View options
+        
+        # Opcje widoku
         options_frame = ttk.Frame(self.frame)
         options_frame.pack(fill='x', pady=5)
         
@@ -42,31 +42,30 @@ class BrowseTab:
                        variable=self.view_mode, value="text",
                        command=self.update_view).pack(side='left', padx=10)
         
-        # Browser button
+        # Przycisk przeglądarki
         ttk.Button(options_frame, text="🌐 Otwórz w przeglądarce", 
                   command=self.open_in_browser).pack(side='right')
         
-        # Page content viewer
+        # Przeglądarka treści strony
         viewer_frame = ttk.Frame(self.frame)
         viewer_frame.pack(fill='both', expand=True, pady=5)
         
-        # Add scrollbars
+        # Dodaj paski przewijania
         self.page_viewer = scrolledtext.ScrolledText(viewer_frame, wrap=tk.WORD)
         self.page_viewer.pack(fill='both', expand=True)
         
-        # Status bar
+        # Pasek statusu
         self.status_frame = ttk.Frame(self.frame)
         self.status_frame.pack(fill='x', pady=2)
         
         self.status_label = ttk.Label(self.status_frame, text="Brak załadowanych stron")
-        self.status_label.pack(side='left')
-        
+        self.status_label.pack(side='left')        
     def update_page_list(self, urls: List[str]):
         """
-        Update the list of available pages.
+        Aktualizuje listę dostępnych stron.
         
         Args:
-            urls: List of URLs to display
+            urls: Lista URL-ów do wyświetlenia
         """
         self.page_combo['values'] = urls
         if urls:
@@ -76,10 +75,9 @@ class BrowseTab:
         else:
             self.page_combo.set('')
             self.page_viewer.delete(1.0, tk.END)
-            self.status_label.config(text="Brak załadowanych stron")
-            
+            self.status_label.config(text="Brak załadowanych stron")            
     def show_page(self, event=None):
-        """Display the selected page."""
+        """Wyświetla wybraną stronę."""
         selected_url = self.page_combo.get()
         if not selected_url:
             return
@@ -102,10 +100,10 @@ class BrowseTab:
         self.page_viewer.delete(1.0, tk.END)
         
         if self.view_mode.get() == "source":
-            # Show HTML source code
+            # Pokaż kod źródłowy HTML
             self.page_viewer.insert(1.0, content)
         else:
-            # Show extracted text
+            # Pokaż wyodrębniony tekst
             try:
                 from bs4 import BeautifulSoup
                 soup = BeautifulSoup(content, 'html.parser')
@@ -113,10 +111,9 @@ class BrowseTab:
                 self.page_viewer.insert(1.0, text_content)
             except Exception:
                 # Jeśli nie można przetworzyć HTML, pokaż surową zawartość
-                self.page_viewer.insert(1.0, content)
-                
+                self.page_viewer.insert(1.0, content)                
     def update_view(self):
-        """Update the view when view mode changes."""
+        """Aktualizuje widok po zmianie trybu wyświetlania."""
         self.show_page()
         
     def open_in_browser(self):
@@ -151,8 +148,7 @@ class BrowseTab:
                     html_doc = f"""<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Website Analyzer - {selected_url}</title>
+    <meta charset="utf-8">                    <title>Analizator Witryn - {selected_url}</title>
     <base href="{selected_url}">
 </head>
 <body>

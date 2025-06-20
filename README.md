@@ -52,7 +52,7 @@ pyproject.toml              # Konfiguracja projektu
 ```bash
 # Klonuj projekt
 git clone [adres-repo]
-cd src\website_analyzer
+cd website_analyzer
 
 # Utwórz środowisko wirtualne
 python -m venv venv
