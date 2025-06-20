@@ -30,8 +30,7 @@ class BrowseTab:
         self.page_combo = ttk.Combobox(selector_frame, state='readonly')
         self.page_combo.pack(side='left', fill='x', expand=True, padx=5)
         self.page_combo.bind('<<ComboboxSelected>>', self.show_page)
-        
-        # View options
+          # View options
         options_frame = ttk.Frame(self.frame)
         options_frame.pack(fill='x', pady=5)
         
@@ -42,6 +41,10 @@ class BrowseTab:
         ttk.Radiobutton(options_frame, text="Tekst", 
                        variable=self.view_mode, value="text",
                        command=self.update_view).pack(side='left', padx=10)
+        
+        # Browser button
+        ttk.Button(options_frame, text="🌐 Otwórz w przeglądarce", 
+                  command=self.open_in_browser).pack(side='right')
         
         # Page content viewer
         viewer_frame = ttk.Frame(self.frame)
@@ -115,3 +118,61 @@ class BrowseTab:
     def update_view(self):
         """Update the view when view mode changes."""
         self.show_page()
+        
+    def open_in_browser(self):
+        """Otwiera aktualną stronę w przeglądarce."""
+        import webbrowser
+        import tempfile
+        import os
+        import threading
+        import time
+        from tkinter import messagebox
+        
+        selected_url = self.page_combo.get()
+        if not selected_url:
+            messagebox.showwarning("Uwaga", "Nie wybrano strony")
+            return
+            
+        content = self.main_window.get_page_content(selected_url)
+        if not content:
+            messagebox.showerror("Błąd", "Nie można pobrać zawartości strony")
+            return
+            
+        try:
+            # Utwórz poprawny plik HTML z meta tagami
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.html', 
+                                           delete=False, encoding='utf-8') as f:
+                # Sprawdź czy to już pełny HTML
+                if content.strip().startswith('<!DOCTYPE') or content.strip().startswith('<html'):
+                    # To już pełny dokument HTML
+                    f.write(content)
+                else:
+                    # Dodaj podstawową strukturę HTML
+                    html_doc = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Website Analyzer - {selected_url}</title>
+    <base href="{selected_url}">
+</head>
+<body>
+{content}
+</body>
+</html>"""
+                    f.write(html_doc)
+                temp_file = f.name
+                
+            # Otwórz w przeglądarce
+            webbrowser.open(f'file://{temp_file}')
+            
+            # Usuń plik po 60 sekundach
+            def cleanup():
+                time.sleep(60)
+                try:
+                    os.unlink(temp_file)
+                except:
+                    pass
+            threading.Thread(target=cleanup, daemon=True).start()
+            
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Nie można otworzyć w przeglądarce: {str(e)}")
