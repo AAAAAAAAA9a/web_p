@@ -18,6 +18,11 @@ class WebsiteDownloader:
     Ta klasa implementuje webcrawler - program, który automatycznie
     odwiedza strony internetowe i pobiera ich zawartość.
     Można ustawić maksymalną liczbę stron i głębokość przeszukiwania.
+    
+    Crawler ogranicza się do:
+    - Tej samej domeny co URL startowy
+    - Tej samej ścieżki bazowej co URL startowy (np. jeśli zaczynasz od 
+      https://example.com/docs, crawler pozostanie w /docs i podkatalogach)
     """
     
     def __init__(self, max_pages: int = 50, max_depth: int = 2, timeout: int = 10):
@@ -32,6 +37,7 @@ class WebsiteDownloader:
         self.max_pages = max_pages
         self.max_depth = max_depth
         self.timeout = timeout
+        self.base_path = ""  # Ścieżka bazowa do ograniczenia crawlowania
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -67,8 +73,14 @@ class WebsiteDownloader:
         to_visit: List[Tuple[str, int]] = [(start_url, 0)]  # kolejka: (url, głębokość)
         downloaded_pages: Dict[str, Dict] = {}  # wyniki
         
-        # KROK 3: Określ domenę bazową (żeby nie wychodzić poza witrynę)
-        base_domain = urlparse(start_url).netloc
+        # KROK 3: Określ domenę bazową i ścieżkę bazową
+        parsed_start = urlparse(start_url)
+        base_domain = parsed_start.netloc
+        self.base_path = parsed_start.path.rstrip('/')
+        
+        # Jeśli ścieżka jest pusta lub tylko "/", nie ograniczamy ścieżki
+        if self.base_path in ('', '/'):
+            self.base_path = ""
         
         # KROK 4: Główna pętla pobierania
         while to_visit and len(downloaded_pages) < self.max_pages:
@@ -97,6 +109,11 @@ class WebsiteDownloader:
                     new_links = []
                 for link_url in new_links:
                     if link_url not in visited_urls and len(to_visit) < 1000:
+                        # Dodatkowe zabezpieczenie - sprawdź ścieżkę przed dodaniem do kolejki
+                        if self.base_path:
+                            parsed_link = urlparse(link_url)
+                            if not (parsed_link.path == self.base_path or parsed_link.path.startswith(self.base_path + "/")):
+                                continue  # pomiń linki spoza ścieżki bazowej
                         to_visit.append((link_url, depth + 1))
             else:
                 # result zawiera komunikat błędu
@@ -154,7 +171,7 @@ class WebsiteDownloader:
         return 'text/html' in content_type
     
     def _extract_links(self, soup: BeautifulSoup, current_url: str, base_domain: str) -> List[str]:
-        """Wyciąga linki z HTML tylko z tej samej domeny."""
+        """Wyciąga linki z HTML tylko z tej samej domeny i ścieżki bazowej."""
         links = []
         for link in soup.find_all('a', href=True):
             href_attr = link.get('href') # type: ignore
@@ -169,6 +186,12 @@ class WebsiteDownloader:
             
             # Tylko linki z tej samej domeny
             if parsed.netloc == base_domain:
+                # Sprawdź ograniczenie ścieżki bazowej
+                if self.base_path:
+                    # Sprawdź czy link jest w obrębie ścieżki bazowej
+                    if not (parsed.path == self.base_path or parsed.path.startswith(self.base_path + "/")):
+                        continue  # pomiń linki spoza ścieżki bazowej
+                
                 # Usuń fragment z URL
                 clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
                 if parsed.query:

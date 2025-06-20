@@ -69,8 +69,7 @@ class AnalysisTab:
         self.links_text = scrolledtext.ScrolledText(links_container, wrap=tk.WORD, 
                                                    font=('Courier', 9))
         self.links_text.pack(fill='both', expand=True)
-        
-        # Zakładka obrazów
+          # Zakładka obrazów
         images_frame = ttk.Frame(self.analysis_notebook)
         self.analysis_notebook.add(images_frame, text="🖼️ Images")
         images_container = ttk.Frame(images_frame)
@@ -78,6 +77,33 @@ class AnalysisTab:
         self.images_text = scrolledtext.ScrolledText(images_container, wrap=tk.WORD, 
                                                     font=('Courier', 9))
         self.images_text.pack(fill='both', expand=True)
+        
+        # Zakładka mediów (video/audio)
+        media_frame = ttk.Frame(self.analysis_notebook)
+        self.analysis_notebook.add(media_frame, text="🎬 Media")
+        media_container = ttk.Frame(media_frame)
+        media_container.pack(fill='both', expand=True, padx=10, pady=10)
+        self.media_text = scrolledtext.ScrolledText(media_container, wrap=tk.WORD, 
+                                                   font=('Courier', 9))
+        self.media_text.pack(fill='both', expand=True)
+        
+        # Zakładka zasobów (CSS/JS)
+        resources_frame = ttk.Frame(self.analysis_notebook)
+        self.analysis_notebook.add(resources_frame, text="⚙️ Resources")
+        resources_container = ttk.Frame(resources_frame)
+        resources_container.pack(fill='both', expand=True, padx=10, pady=10)
+        self.resources_text = scrolledtext.ScrolledText(resources_container, wrap=tk.WORD, 
+                                                       font=('Courier', 9))
+        self.resources_text.pack(fill='both', expand=True)
+        
+        # Zakładka dokumentów
+        documents_frame = ttk.Frame(self.analysis_notebook)
+        self.analysis_notebook.add(documents_frame, text="📄 Documents")
+        documents_container = ttk.Frame(documents_frame)
+        documents_container.pack(fill='both', expand=True, padx=10, pady=10)
+        self.documents_text = scrolledtext.ScrolledText(documents_container, wrap=tk.WORD, 
+                                                       font=('Courier', 9))
+        self.documents_text.pack(fill='both', expand=True)
         
     def analyze_website(self):
         """Uruchamia analizę strony internetowej."""
@@ -89,11 +115,13 @@ class AnalysisTab:
         
         Args:
             analysis_data: Słownik zawierający wyniki analizy
-        """
-        # Wyczyść istniejącą zawartość
+        """        # Wyczyść istniejącą zawartość
         self.stats_text.delete(1.0, tk.END)
         self.links_text.delete(1.0, tk.END)
         self.images_text.delete(1.0, tk.END)
+        self.media_text.delete(1.0, tk.END)
+        self.resources_text.delete(1.0, tk.END)
+        self.documents_text.delete(1.0, tk.END)
         
         # Wyświetl nową zawartość
         if 'stats' in analysis_data:
@@ -104,6 +132,15 @@ class AnalysisTab:
             
         if 'images' in analysis_data:
             self.images_text.insert(1.0, analysis_data['images'])
+            
+        if 'media' in analysis_data:
+            self.media_text.insert(1.0, analysis_data['media'])
+            
+        if 'resources' in analysis_data:
+            self.resources_text.insert(1.0, analysis_data['resources'])
+            
+        if 'documents' in analysis_data:
+            self.documents_text.insert(1.0, analysis_data['documents'])
             
     def set_analyzing(self, is_analyzing: bool):
         """

@@ -100,7 +100,7 @@ class FileManager:
             f.write("RAPORT ANALIZY WITRYNY / WEBSITE ANALYSIS REPORT\n")
             f.write("="*60 + "\n\n")
             
-            for section in ['stats', 'links', 'images']:
+            for section in ['stats', 'links', 'images', 'media', 'resources', 'documents']:
                 if section in analysis_data:
                     if section != 'stats':
                         f.write("\n\n")
