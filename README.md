@@ -11,9 +11,11 @@ Aplikacja GUI w języku Python do pobierania i analizowania stron internetowych.
 ## Funkcjonalności
 
 1. **Pobieranie stron** - rekursywne pobieranie witryn z kontrolą głębokości
-2. **Analiza zawartości** - statystyki, linki, obrazy, częstotliwość słów
-3. **Przeglądanie** - wyświetlanie pobranych stron z kodem źródłowym
-4. **Zarządzanie danymi** - zapisywanie i wczytywanie projektów
+2. **Analiza zawartości** - statystyki, linki, obrazy, media, zasoby, dokumenty, częstotliwość słów
+3. **Pobieranie zasobów** - możliwość pobierania pojedynczych plików z witryny
+4. **Przeglądanie** - wyświetlanie pobranych stron z kodem źródłowym
+5. **Zarządzanie danymi** - zapisywanie i wczytywanie projektów
+6. **Eksport raportów** - generowanie szczegółowych raportów analizy
 
 ## Technologie
 
@@ -25,12 +27,13 @@ Aplikacja GUI w języku Python do pobierania i analizowania stron internetowych.
 
 ## Struktura projektu
 
-```
+```text
 src/website_analyzer/
 ├── core/                    # Logika biznesowa
 │   ├── downloader.py       # Klasa do pobierania stron
 │   ├── analyzer.py         # Klasa do analizy danych
-│   └── file_manager.py     # Zarządzanie plikami
+│   ├── file_manager.py     # Zarządzanie plikami
+│   └── error_handler.py    # Obsługa błędów
 ├── gui/                     # Interfejs użytkownika
 │   ├── main_window.py      # Główne okno
 │   ├── download_tab.py     # Zakładka pobierania
@@ -77,20 +80,30 @@ python main.py
 - Wprowadź URL w polu "URL"
 - Ustaw głębokość pobierania (1-5 poziomów)
 - Ustaw maksymalną liczbę stron
-- Kliknij "🌐 Download Website"
+- Kliknij "🌐 Pobierz Witrynę"
 
 ### 2. Analiza danych
 
-- Przejdź do zakładki "📊 Analysis"
-- Kliknij "🔍 Analyze Website"
-- Przeglądaj wyniki w trzech kategoriach:
-  - **Statystyki** - podstawowe dane liczbowe
-  - **Linki** - analiza odnośników
-  - **Obrazy** - analiza grafik
+- Przejdź do zakładki "📊 Analiza"
+- Kliknij "🔍 Analizuj Witrynę"
+- Przeglądaj wyniki w sześciu kategoriach:
+  - **Statystyki** - podstawowe dane liczbowe i częstotliwość słów
+  - **Linki** - analiza odnośników (wewnętrzne, zewnętrzne, email)
+  - **Obrazy** - analiza grafik według formatów
+  - **Media** - pliki video i audio
+  - **Zasoby** - pliki CSS i JavaScript
+  - **Dokumenty** - pliki PDF, DOC, XLS i inne
+
+### 2a. Pobieranie zasobów
+
+- W zakładce "📊 Analiza" znajdziesz sekcję "🔽 Download Resource"
+- Wklej URL zasobu lub skopiuj go z wyników analizy
+- Kliknij "💾 Download" aby pobrać plik na dysk
+- Dostępne formaty: obrazy, dokumenty, media, pliki webowe
 
 ### 3. Przeglądanie
 
-- Zakładka "📖 Browse" pozwala:
+- Zakładka "📖 Przeglądanie" pozwala:
   - Przeglądać listę pobranych stron
   - Wyświetlać kod źródłowy HTML
   - Wyświetlać czysty tekst

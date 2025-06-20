@@ -28,7 +28,6 @@ class AnalysisTab:
           # Sekcja kontroli analizy
         control_section = ttk.LabelFrame(main_container, text="Kontrola Analizy", padding=15)
         control_section.pack(fill='x', pady=(0, 15))
-        
         control_frame = ttk.Frame(control_section)
         control_frame.pack(fill='x')
         
@@ -186,14 +185,14 @@ class AnalysisTab:
     def export_report(self):
         """Eksportuje raport analizy do pliku."""
         filename = filedialog.asksaveasfilename(
-            title="Zapisz raport",
+            title="Save report",
             defaultextension=".txt",
             filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
         )
         
         if filename:
             if self.main_window.save_analysis_report(filename):
-                messagebox.showinfo("Sukces", f"Raport zapisany: {filename}")
+                messagebox.showinfo("Success", f"Raport zapisany: {filename}")
             else:                messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
                 
     def download_resource(self):
