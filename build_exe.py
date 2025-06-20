@@ -21,7 +21,7 @@ def install_pyinstaller():
     except ImportError:
         print("Instaluję PyInstaller...")
         try:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "pyinstaller"])
             print("PyInstaller zainstalowane pomyślnie")
             return True
         except subprocess.CalledProcessError as e:
