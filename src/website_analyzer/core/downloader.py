@@ -92,7 +92,7 @@ class WebsiteDownloader:
                 
                 # Znajdź nowe linki jeśli to HTML
                 if isinstance(result, dict):
-                    new_links = self._find_new_links(result['content'], current_url, base_domain)
+                    new_links = self._find_new_links(result, current_url, base_domain)
                 else:
                     new_links = []
                 for link_url in new_links:
@@ -101,7 +101,7 @@ class WebsiteDownloader:
             else:
                 # result zawiera komunikat błędu
                 if progress_callback:
-                    progress_callback(result)
+                    progress_callback(result) # type: ignore
                     
         if progress_callback:
             progress_callback(f"Pobieranie zakończone. Pobrano {len(downloaded_pages)} stron.")
@@ -120,23 +120,25 @@ class WebsiteDownloader:
                 'status_code': response.status_code,
                 'headers': dict(response.headers),
                 'url': url,
-                'size': len(response.text)
+                'size': len(response.text),
+                'is_html': self._is_html_content(response)  # Dodaj tę informację
             }
         except requests.RequestException as e:
             return False, handle_network_error(url, e)
         except Exception as e:
             return False, f"Błąd pobierania {url}: {str(e)}"
-    
-    def _find_new_links(self, content: str, current_url: str, base_domain: str) -> List[str]:
+
+    def _find_new_links(self, page_data: Dict, current_url: str, base_domain: str) -> List[str]:
         """Znajduje nowe linki w HTML."""
         try:
-            if 'text/html' not in content[:1000]:  # szybkie sprawdzenie
+            # Sprawdź czy to HTML na podstawie nagłówków
+            if not page_data.get('is_html', False):
                 return []
             
-            soup = BeautifulSoup(content, 'html.parser')
+            soup = BeautifulSoup(page_data['content'], 'html.parser')
             return self._extract_links(soup, current_url, base_domain)
         except Exception:
-            return []  # jeśli parsowanie się nie powiedzie, po prostu brak linków
+            return []
     
     def _is_valid_url(self, url: str) -> bool:
         """Sprawdza czy URL jest poprawny."""
@@ -155,7 +157,7 @@ class WebsiteDownloader:
         """Wyciąga linki z HTML tylko z tej samej domeny."""
         links = []
         for link in soup.find_all('a', href=True):
-            href_attr = link.get('href')
+            href_attr = link.get('href') # type: ignore
             if not href_attr:
                 continue
             href = str(href_attr).strip()

@@ -45,6 +45,7 @@ pyproject.toml              # Konfiguracja projektu
 ## Instalacja i uruchomienie
 
 ### Krok 1: Przygotowanie środowiska
+
 ```bash
 # Klonuj projekt
 git clone [adres-repo]
@@ -58,11 +59,13 @@ venv\Scripts\activate     # Windows
 ```
 
 ### Krok 2: Instalacja zależności
+
 ```bash
 pip install -e .
 ```
 
 ### Krok 3: Uruchomienie
+
 ```bash
 python main.py
 ```
@@ -70,12 +73,14 @@ python main.py
 ## Instrukcja użycia
 
 ### 1. Pobieranie strony
+
 - Wprowadź URL w polu "URL"
 - Ustaw głębokość pobierania (1-5 poziomów)
 - Ustaw maksymalną liczbę stron
 - Kliknij "🌐 Download Website"
 
 ### 2. Analiza danych
+
 - Przejdź do zakładki "📊 Analysis"
 - Kliknij "🔍 Analyze Website"
 - Przeglądaj wyniki w trzech kategoriach:
@@ -84,12 +89,14 @@ python main.py
   - **Obrazy** - analiza grafik
 
 ### 3. Przeglądanie
+
 - Zakładka "📖 Browse" pozwala:
   - Przeglądać listę pobranych stron
   - Wyświetlać kod źródłowy HTML
   - Wyświetlać czysty tekst
 
 ### 4. Zarządzanie projektami
+
 - **Zapisz na dysk** - eksport danych do folderu
 - **Wczytaj z dysku** - import wcześniej zapisanych danych
 - **Eksportuj raport** - generowanie raportu tekstowego
@@ -136,7 +143,7 @@ python build_exe.py
 # Plik zostanie utworzony w folderze release/
 ```
 
-### Instrukcja manualna:
+### Instrukcja manualna
 
 ```bash
 # 1. Zainstaluj PyInstaller
