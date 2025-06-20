@@ -29,24 +29,22 @@ class WebsiteAnalyzer:
         Returns:
             Słownik zawierający wyniki analizy dla różnych kategorii
         """
-        if not downloaded_pages:
-            return {}
-            
+           
         if not downloaded_pages:
             return {'stats': 'Brak danych do analizy.', 'links': '', 'images': ''}
         
         # Podstawowe statystyki
         total_pages = len(downloaded_pages)
         total_size = sum(page['size'] for page in downloaded_pages.values())
-        all_links = []      # wszystkie linki ze wszystkich stron
-        all_images = []     # wszystkie obrazy ze wszystkich stron
-        all_videos = []     # wszystkie filmy ze wszystkich stron
-        all_audio = []      # wszystkie pliki audio ze wszystkich stron
-        all_css = []        # wszystkie pliki CSS ze wszystkich stron
-        all_js = []         # wszystkie pliki JavaScript ze wszystkich stron
-        all_documents = []  # wszystkie dokumenty (PDF, DOC, itp.)
-        all_words = []      # wszystkie słowa ze wszystkich stron
-        status_codes = []   # kody HTTP odpowiedzi (200=OK, 404=nie znaleziono, itp.)
+        all_links = []      # linki
+        all_images = []     # obrazy
+        all_videos = []     # filmy
+        all_audio = []      # pliki audio
+        all_css = []        # pliki CSS
+        all_js = []         # pliki JavaScript
+        all_documents = []  # dokumenty
+        all_words = []      # słowa
+        status_codes = []   # kody HTTP odpowiedzi
         for i, (url, page_data) in enumerate(downloaded_pages.items()):
             if progress_callback:
                 progress_callback(f"Analizuję stronę {i+1}/{total_pages}: {url[:50]}...")
