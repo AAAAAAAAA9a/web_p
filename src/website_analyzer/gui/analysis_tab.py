@@ -172,20 +172,19 @@ class AnalysisTab:
             self.analysis_progress.start()
         else:
             self.analyze_btn.config(state='normal')
-            self.analysis_progress.stop()
-            
+            self.analysis_progress.stop()            
     def export_report(self):
         """Eksportuje raport analizy do pliku."""
         filename = filedialog.asksaveasfilename(
-            title="Save report",
+            title="Zapisz raport",
             defaultextension=".txt",
-            filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
-        )
+            filetypes=[("Pliki tekstowe", "*.txt"), ("Wszystkie pliki", "*.*")]        )
         
         if filename:
             if self.main_window.save_analysis_report(filename):
-                messagebox.showinfo("Success", f"Raport zapisany: {filename}")
-            else:                messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
+                messagebox.showinfo("Sukces", f"Raport zapisany: {filename}")
+            else:
+                messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
                 
     def download_resource(self):
         """Pobiera zasób z podanego URL na dysk."""
