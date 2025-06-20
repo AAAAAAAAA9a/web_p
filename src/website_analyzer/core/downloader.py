@@ -61,30 +61,25 @@ class WebsiteDownloader:
         Zwraca:
             Słownik gdzie klucz=URL, wartość=dane strony (zawartość, nagłówki, itp.)
         """
-        # KROK 1: Sprawdź czy URL jest poprawny
         if not self._is_valid_url(start_url):
             raise ValueError(f"Nieprawidłowy URL: {start_url}")
             
         if progress_callback:
             progress_callback(f"Rozpoczynam pobieranie: {start_url}")
             
-        # KROK 2: Przygotuj struktury danych do śledzenia postępu
-        visited_urls: Set[str] = set()  # już odwiedzone URL
+        visited_urls: Set[str] = set()
         to_visit: List[Tuple[str, int]] = [(start_url, 0)]  # kolejka: (url, głębokość)
         downloaded_pages: Dict[str, Dict] = {}  # wyniki
         
-        # KROK 3: Określ domenę bazową i ścieżkę bazową
         parsed_start = urlparse(start_url)
         base_domain = parsed_start.netloc
         self.base_path = parsed_start.path.rstrip('/')
         
-        # Jeśli ścieżka jest pusta lub tylko "/", nie ograniczamy ścieżki
         if self.base_path in ('', '/'):
             self.base_path = ""
         
-        # KROK 4: Główna pętla pobierania
         while to_visit and len(downloaded_pages) < self.max_pages:
-            # Weź następny URL z kolejki
+            # Pobierz pierwszy URL z kolejki
             current_url, depth = to_visit.pop(0)
             
             # Sprawdź czy już nie odwiedziliśmy tej strony lub czy nie za głęboko
@@ -116,7 +111,6 @@ class WebsiteDownloader:
                                 continue  # pomiń linki spoza ścieżki bazowej
                         to_visit.append((link_url, depth + 1))
             else:
-                # result zawiera komunikat błędu
                 if progress_callback:
                     progress_callback(result) # type: ignore
                     
@@ -138,7 +132,7 @@ class WebsiteDownloader:
                 'headers': dict(response.headers),
                 'url': url,
                 'size': len(response.text),
-                'is_html': self._is_html_content(response)  # Dodaj tę informację
+                'is_html': self._is_html_content(response)
             }
         except requests.RequestException as e:
             return False, handle_network_error(url, e)

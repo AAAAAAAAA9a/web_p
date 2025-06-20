@@ -15,16 +15,13 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 
-# Dodaj folder 'src' do ścieżki Pythona
-# Dzięki temu Python znajdzie nasze moduły w folderze src/
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-# Próbuj zaimportować główne okno aplikacji
 try:
     from website_analyzer.gui.main_window import MainWindow
 except ImportError as e:
     print(f"Błąd importu: {e}")
-    print("Upewnij się, że zainstalowałeś wszystkie wymagane biblioteki:")
+    print("Sprawdź wymagane biblioteki:")
     print("pip install -e .")
     sys.exit(1)
 
@@ -40,26 +37,21 @@ def main():
     4. Uruchamia główną pętlę GUI
     """
     try:
-        # Utwórz główne okno aplikacji (tkinter)
         root = tk.Tk()
-        app = MainWindow(root)  # MainWindow to nasza główna klasa GUI
+        app = MainWindow(root)
         
-        # Wycentruj okno na ekranie
-        root.update_idletasks()  # odśwież okno żeby poznać jego rozmiar
+        root.update_idletasks()
         width = root.winfo_width()
         height = root.winfo_height()
-        # Oblicz pozycję do wycentrowania
         x = (root.winfo_screenwidth() // 2) - (width // 2)
         y = (root.winfo_screenheight() // 2) - (height // 2)
         root.geometry(f"{width}x{height}+{x}+{y}")
         
-        # Uruchom główną pętlę GUI
         root.mainloop()
         
     except Exception as e:
         error_msg = f"Błąd uruchamiania aplikacji: {str(e)}"
         print(error_msg)
-        # Spróbuj pokazać GUI error, ale jeśli się nie uda - trudno
         try:
             messagebox.showerror("Błąd", error_msg)
         except:

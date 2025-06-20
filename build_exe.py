@@ -16,16 +16,16 @@ def install_pyinstaller():
     """Instaluje PyInstaller jeśli nie jest zainstalowane."""
     try:
         import PyInstaller
-        print("✓ PyInstaller już zainstalowane")
+        print("PyInstaller już zainstalowane")
         return True
     except ImportError:
-        print("📦 Instaluję PyInstaller...")
+        print("Instaluję PyInstaller...")
         try:
             subprocess.check_call([sys.executable, "-m", "pip", "install", "pyinstaller"])
-            print("✓ PyInstaller zainstalowane pomyślnie")
+            print("PyInstaller zainstalowane pomyślnie")
             return True
         except subprocess.CalledProcessError as e:
-            print(f"❌ Błąd instalacji PyInstaller: {e}")
+            print(f"Błąd instalacji PyInstaller: {e}")
             return False
 
 
@@ -96,46 +96,43 @@ exe = EXE(
     with open('website_analyzer.spec', 'w', encoding='utf-8') as f:
         f.write(spec_content)
     
-    print("✓ Plik konfiguracyjny .spec utworzony")
+    print("Plik konfiguracyjny .spec utworzony")
 
 
 def build_executable():
     """Buduje plik wykonywalny."""
-    print("🔨 Tworzę plik wykonywalny...")
-    print("⏳ To może potrwać kilka minut...")
+    print("Tworzę plik wykonywalny, może potrwać kilka minut")
     
     try:
-        # Używaj pliku .spec dla lepszej kontroli
         cmd = [sys.executable, "-m", "PyInstaller", "--clean", "website_analyzer.spec"]
         
         result = subprocess.run(cmd, capture_output=True, text=True)
         
         if result.returncode == 0:
-            print("✓ Plik wykonywalny utworzony pomyślnie!")
+            print("Plik wykonywalny utworzony pomyślnie!")
             
-            # Sprawdź czy plik został utworzony
             exe_path = Path("dist/WebsiteAnalyzer.exe")
             if exe_path.exists():
                 size_mb = exe_path.stat().st_size / (1024 * 1024)
-                print(f"📁 Plik: {exe_path.absolute()}")
-                print(f"📏 Rozmiar: {size_mb:.1f} MB")
+                print(f"Plik: {exe_path.absolute()}")
+                print(f"Rozmiar: {size_mb:.1f} MB")
                 return str(exe_path.absolute())
             else:
-                print("❌ Nie znaleziono utworzonego pliku .exe")
+                print("Nie znaleziono utworzonego pliku .exe")
                 return None
         else:
-            print("❌ Błąd podczas tworzenia pliku wykonywalnego:")
+            print("Błąd podczas tworzenia pliku wykonywalnego:")
             print(result.stderr)
             return None
             
     except Exception as e:
-        print(f"❌ Błąd: {e}")
+        print(f"Błąd: {e}")
         return None
 
 
 def cleanup_build_files():
     """Usuwa tymczasowe pliki po buildzie."""
-    print("🧹 Sprzątam pliki tymczasowe...")
+    print("Sprzątam pliki tymczasowe...")
     
     cleanup_paths = ['build', '__pycache__', 'website_analyzer.spec']
     
@@ -146,7 +143,7 @@ def cleanup_build_files():
             else:
                 os.remove(path)
     
-    print("✓ Pliki tymczasowe usunięte")
+    print("Pliki tymczasowe usunięte")
 
 
 def create_distribution_folder():
@@ -158,12 +155,10 @@ def create_distribution_folder():
     
     dist_folder.mkdir()
     
-    # Skopiuj exe
     exe_source = Path("dist/WebsiteAnalyzer.exe")
     if exe_source.exists():
         shutil.copy2(exe_source, dist_folder / "WebsiteAnalyzer.exe")
     
-    # Utwórz README dla użytkowników
     readme_content = """# Website Analyzer - Analizator Stron Internetowych
 
 ## Jak uruchomić:
@@ -177,64 +172,47 @@ def create_distribution_folder():
 4. Po pobraniu przejdź do zakładki "Analiza" 
 5. Kliknij "Analizuj witrynę"
 6. Przeglądaj wyniki w różnych zakładkach
+7. Możesz pobierać zasoby wklejając URL do odpowiedniego pola
+8. Możesz otworzyć wybraną stronę w przeglądarce klikając przycisk "Otwórz w przeglądarce"
 
-## Wymagania systemowe:
-- Windows 7/8/10/11
-- Połączenie z internetem
-- ~100 MB wolnego miejsca na dysku
-
-## Problemy:
-Jeśli aplikacja nie uruchamia się:
-1. Sprawdź czy Windows Defender nie blokuje pliku
-2. Uruchom jako administrator
-3. Dodaj do wyjątków antywirusowych
-
-Autor: [Twoje Imię i Nazwisko]
+Autor: [Artur Lisowski, Julia Kusztal]
 Projekt studencki - {rok}
 """
     
     with open(dist_folder / "README.txt", 'w', encoding='utf-8') as f:
         f.write(readme_content.format(rok="2024/2025"))
     
-    print(f"📦 Pakiet dystrybucyjny utworzony w folderze: {dist_folder.absolute()}")
+    print(f"Pakiet dystrybucyjny utworzony w folderze: {dist_folder.absolute()}")
     return dist_folder
 
 
 def main():
     """Główna funkcja skryptu."""
-    print("🚀 Builder pliku wykonywalnego Website Analyzer")
+    print("Builder pliku wykonywalnego Website Analyzer")
     print("=" * 55)
     
-    # Sprawdź czy jesteśmy w odpowiednim katalogu
     if not Path("main.py").exists():
-        print("❌ Błąd: Nie znaleziono pliku main.py")
-        print("   Uruchom skrypt z głównego katalogu projektu")
+        print("Błąd: Nie znaleziono pliku main.py")
+        print("Uruchom skrypt z głównego katalogu projektu")
         sys.exit(1)
     
-    # Krok 1: Zainstaluj PyInstaller
     if not install_pyinstaller():
         sys.exit(1)
     
-    # Krok 2: Utwórz plik konfiguracyjny
     create_spec_file()
     
-    # Krok 3: Zbuduj executable
     exe_path = build_executable()
     if not exe_path:
         sys.exit(1)
     
-    # Krok 4: Utwórz pakiet dystrybucyjny
     dist_folder = create_distribution_folder()
     
-    # Krok 5: Sprzątaj
     cleanup_build_files()
     
-    print("\n✅ Gotowe!")
-    print(f"📦 Pakiet dystrybucyjny: {dist_folder.absolute()}")
-    print("\n💡 Instrukcje:")
+    print(f"Pakiet dystrybucyjny: {dist_folder.absolute()}")
+    print("\nInstrukcje:")
     print("   - Skopiuj folder 'release' na docelowy komputer")
     print("   - Uruchom WebsiteAnalyzer.exe")
-    print("   - Aplikacja działa bez instalacji Pythona!")
 
 
 if __name__ == "__main__":

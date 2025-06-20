@@ -135,9 +135,8 @@ class FileManager:
             if os.path.exists(filepath):
                 with open(filepath, 'r', encoding=self.default_encoding) as f:
                     content = f.read()
-                    # Usuń komentarze HTML które dodaliśmy
                     lines = content.split('\n')
-                    content = '\n'.join(lines[3:])  # Pomiń pierwsze 3 linie komentarzy
+                    content = '\n'.join(lines[3:])
                     
                 downloaded_pages[page_info['url']] = {
                     'content': content,

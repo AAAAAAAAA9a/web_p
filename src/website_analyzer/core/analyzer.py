@@ -37,7 +37,7 @@ class WebsiteAnalyzer:
         
         # Podstawowe statystyki
         total_pages = len(downloaded_pages)
-        total_size = sum(page['size'] for page in downloaded_pages.values())          # KROK 1: Przygotuj listy do zbierania danych z wszystkich stron
+        total_size = sum(page['size'] for page in downloaded_pages.values())
         all_links = []      # wszystkie linki ze wszystkich stron
         all_images = []     # wszystkie obrazy ze wszystkich stron
         all_videos = []     # wszystkie filmy ze wszystkich stron
@@ -121,7 +121,6 @@ class WebsiteAnalyzer:
             total_pages, total_size, status_codes, all_links, all_images, 
             all_videos, all_audio, all_css, all_js, all_documents, word_freq        )
         
-        # Wygeneruj szczegółowe analizy
         if progress_callback:
             progress_callback("Analizuję linki...")
         links_analysis = self._analyze_links(all_links)

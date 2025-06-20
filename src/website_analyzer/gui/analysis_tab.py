@@ -41,7 +41,7 @@ class AnalysisTab:
         # Pasek postępu dla analizy
         self.analysis_progress = ttk.Progressbar(control_frame, mode='indeterminate', length=200)
         self.analysis_progress.pack(side='right')
-          # NOWA SEKCJA: Pobieranie zasobów
+        
         download_section = ttk.LabelFrame(main_container, text="🔽 Pobierz Zasób", padding=15)
         download_section.pack(fill='x', pady=(0, 15))
         
@@ -54,22 +54,18 @@ class AnalysisTab:
         self.resource_url_entry = ttk.Entry(download_frame, textvariable=self.resource_url_var, width=50)
         self.resource_url_entry.pack(side='left', fill='x', expand=True, padx=(0, 10))
           # Przycisk pobierania
-        self.download_btn = ttk.Button(download_frame, text="💾 Pobierz", 
-                                     command=self.download_resource)
+        self.download_btn = ttk.Button(download_frame, text="💾 Pobierz", command=self.download_resource)
         self.download_btn.pack(side='right')
           # Przycisk do kopiowania URL z analizy
-        self.copy_btn = ttk.Button(download_frame, text="📋 Skopiuj z Analizy", 
-                                  command=self.copy_selected_url)
+        self.copy_btn = ttk.Button(download_frame, text="📋 Skopiuj z Analizy", command=self.copy_selected_url)
         self.copy_btn.pack(side='right', padx=(0, 5))
           # Informacja o statusie pobierania
         self.download_status_var = tk.StringVar(value="Gotowy do pobierania")
-        ttk.Label(download_section, textvariable=self.download_status_var, 
-                 font=('TkDefaultFont', 8)).pack(fill='x', pady=(10, 0))
+        ttk.Label(download_section, textvariable=self.download_status_var, font=('TkDefaultFont', 8)).pack(fill='x', pady=(10, 0))
           # Sekcja wyników analizy
         results_section = ttk.LabelFrame(main_container, text="Wyniki Analizy", padding=10)
         results_section.pack(fill='both', expand=True)
         
-        # Notebook wyników analizy
         self.analysis_notebook = ttk.Notebook(results_section)
         self.analysis_notebook.pack(fill='both', expand=True)
           # Zakładka statystyk
@@ -77,23 +73,20 @@ class AnalysisTab:
         self.analysis_notebook.add(stats_frame, text="📈 Statystyki")
         stats_container = ttk.Frame(stats_frame)
         stats_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.stats_text = scrolledtext.ScrolledText(stats_container, wrap=tk.WORD, 
-                                                   font=('Courier', 9))
+        self.stats_text = scrolledtext.ScrolledText(stats_container, wrap=tk.WORD, font=('Courier', 9))
         self.stats_text.pack(fill='both', expand=True)
           # Zakładka linków
         links_frame = ttk.Frame(self.analysis_notebook)
         self.analysis_notebook.add(links_frame, text="🔗 Linki")
         links_container = ttk.Frame(links_frame)
         links_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.links_text = scrolledtext.ScrolledText(links_container, wrap=tk.WORD, 
-                                                   font=('Courier', 9))
+        self.links_text = scrolledtext.ScrolledText(links_container, wrap=tk.WORD, font=('Courier', 9))
         self.links_text.pack(fill='both', expand=True)        # Zakładka obrazów
         images_frame = ttk.Frame(self.analysis_notebook)
         self.analysis_notebook.add(images_frame, text="🖼️ Obrazy")
         images_container = ttk.Frame(images_frame)
         images_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.images_text = scrolledtext.ScrolledText(images_container, wrap=tk.WORD, 
-                                                    font=('Courier', 9))
+        self.images_text = scrolledtext.ScrolledText(images_container, wrap=tk.WORD, font=('Courier', 9))
         self.images_text.pack(fill='both', expand=True)
         
         # Zakładka mediów (video/audio)
@@ -101,8 +94,7 @@ class AnalysisTab:
         self.analysis_notebook.add(media_frame, text="🎬 Media")
         media_container = ttk.Frame(media_frame)
         media_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.media_text = scrolledtext.ScrolledText(media_container, wrap=tk.WORD, 
-                                                   font=('Courier', 9))
+        self.media_text = scrolledtext.ScrolledText(media_container, wrap=tk.WORD, font=('Courier', 9))
         self.media_text.pack(fill='both', expand=True)
         
         # Zakładka zasobów (CSS/JS)
@@ -110,8 +102,7 @@ class AnalysisTab:
         self.analysis_notebook.add(resources_frame, text="⚙️ Zasoby")
         resources_container = ttk.Frame(resources_frame)
         resources_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.resources_text = scrolledtext.ScrolledText(resources_container, wrap=tk.WORD, 
-                                                       font=('Courier', 9))
+        self.resources_text = scrolledtext.ScrolledText(resources_container, wrap=tk.WORD, font=('Courier', 9))
         self.resources_text.pack(fill='both', expand=True)
         
         # Zakładka dokumentów
@@ -119,8 +110,7 @@ class AnalysisTab:
         self.analysis_notebook.add(documents_frame, text="📄 Dokumenty")
         documents_container = ttk.Frame(documents_frame)
         documents_container.pack(fill='both', expand=True, padx=10, pady=10)
-        self.documents_text = scrolledtext.ScrolledText(documents_container, wrap=tk.WORD, 
-                                                       font=('Courier', 9))
+        self.documents_text = scrolledtext.ScrolledText(documents_container, wrap=tk.WORD, font=('Courier', 9))
         self.documents_text.pack(fill='both', expand=True)
         
     def analyze_website(self):
@@ -133,7 +123,8 @@ class AnalysisTab:
         
         Args:
             analysis_data: Słownik zawierający wyniki analizy
-        """        # Wyczyść istniejącą zawartość
+        """        
+        # Wyczyść istniejącą zawartość
         self.stats_text.delete(1.0, tk.END)
         self.links_text.delete(1.0, tk.END)
         self.images_text.delete(1.0, tk.END)
@@ -196,7 +187,7 @@ class AnalysisTab:
         if not url:
             messagebox.showwarning("Ostrzeżenie", "Proszę wprowadzić URL zasobu")
             return
-              # Sprawdź czy URL jest poprawny
+        # Sprawdź czy URL jest poprawny
         try:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
@@ -205,9 +196,7 @@ class AnalysisTab:
         except Exception:
             messagebox.showerror("Błąd", "Nieprawidłowy format URL")
             return
-              # Wybór miejsca zapisu
         try:
-            # Spróbuj odgadnąć nazwę pliku z URL
             filename = os.path.basename(parsed.path) or "downloaded_resource"
             if not filename or filename == "/":
                 filename = "downloaded_resource"
@@ -225,13 +214,12 @@ class AnalysisTab:
             )
             
             if not filepath:
-                return  # Użytkownik anulował
+                return
                 
         except Exception as e:
             messagebox.showerror("Błąd", f"Błąd wyboru pliku: {str(e)}")
             return
             
-        # Pobierz plik
         self.download_status_var.set("Pobieranie...")
         self.download_btn.config(state='disabled')
         
@@ -263,7 +251,7 @@ class AnalysisTab:
         """Kopiuje wybrany URL z aktualnej zakładki analizy."""
         # Sprawdź która zakładka jest aktywna
         current_tab = self.analysis_notebook.select()
-        tab_text = self.analysis_notebook.tab(current_tab, "text")        # Określ który widget tekstu użyć
+        tab_text = self.analysis_notebook.tab(current_tab, "text")
         if "Statystyki" in tab_text:
             text_widget = self.stats_text
         elif "Linki" in tab_text:

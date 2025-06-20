@@ -25,10 +25,8 @@ class MainWindow:
         self.root.geometry("1200x800")
         self.root.minsize(900, 600)
         
-        # Skonfiguruj obsługę błędów
         set_global_logger(self._log_message)
         
-        # Skonfiguruj nowoczesny motyw
         self.setup_theme()
         
         # Główne komponenty
@@ -69,11 +67,9 @@ class MainWindow:
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill='both', expand=True, padx=10, pady=10)
         
-        # Utwórz zakładki
         self.download_tab = DownloadTab(self.notebook, self)
         self.analysis_tab = AnalysisTab(self.notebook, self)
         self.browse_tab = BrowseTab(self.notebook, self)
-          # Dodaj zakładki do notebooka
         self.notebook.add(self.download_tab.frame, text="🌐 Pobieranie")
         self.notebook.add(self.analysis_tab.frame, text="📊 Analiza")
         self.notebook.add(self.browse_tab.frame, text="📖 Przeglądanie")
@@ -94,7 +90,6 @@ class MainWindow:
         if not url.startswith(('http://', 'https://')):
             url = 'https://' + url
             
-        # Zaktualizuj ustawienia downloadera
         self.downloader.max_pages = max_pages
         self.downloader.max_depth = max_depth
         
@@ -221,7 +216,7 @@ class MainWindow:
     
     def _log_message(self, message: str):
         """Centralny punkt logowania wiadomości."""
-        # Bezpiecznie wywołaj w głównym wątku
+        # Wywołaj w głównym wątku
         if threading.current_thread() == threading.main_thread():
             self.download_tab.log_message(message)
         else:
