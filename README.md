@@ -168,37 +168,6 @@ pyinstaller --onefile --windowed --name="WebsiteAnalyzer" main.py
 # 3. Plik .exe będzie w folderze dist/
 ```
 
-## Przykład użycia w kodzie
-
-```python
-from src.website_analyzer.core.downloader import WebsiteDownloader
-from src.website_analyzer.core.analyzer import WebsiteAnalyzer
-
-# Pobieranie strony
-downloader = WebsiteDownloader(max_pages=10, max_depth=2)
-pages = downloader.download_website("https://example.com")
-
-# Analiza danych
-analyzer = WebsiteAnalyzer()
-results = analyzer.analyze_pages(pages)
-print(results['stats'])
-```
-
-## Problemy znane i ograniczenia
-
-- Aplikacja może działać wolno dla dużych witryn
-- Brak obsługi JavaScript (tylko statyczny HTML)
-- Rate limiting może spowalniać pobieranie
-- GUI zoptimalizowane dla rozdzielczości 1200x800+
-
-## TODO / Przyszłe ulepszenia
-
-- [ ] Dodanie obsługi robots.txt
-- [ ] Implementacja wielowątkowości dla pobierania
-- [ ] Eksport do formatów CSV/JSON
-- [ ] Zaawansowane filtry analizy
-- [ ] Obsługa cookies i sesji
-
 ## Licencja
 
 Projekt edukacyjny - MIT License
