@@ -7,7 +7,7 @@ Struktura pakietu:
 - core/ - moduły logiki biznesowej (downloader, analyzer, file_manager)
 - gui/  - moduły interfejsu użytkownika (okna, zakładki)
 
-Projekt studencki demonstrujący:
+Projekt demonstrujący:
 - Programowanie obiektowe w Pythonie
 - Tworzenie interfejsów GUI z tkinter
 - Przetwarzanie danych z internetu
@@ -16,4 +16,4 @@ Projekt studencki demonstrujący:
 
 __version__ = "1.0.0"
 __author__ = "[Artur Lisowski, Julia Kusztal]"
-__description__ = "Aplikacja GUI do analizy stron internetowych - projekt studencki"
+__description__ = "Aplikacja GUI do analizy stron internetowych"

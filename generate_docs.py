@@ -33,13 +33,12 @@ def generate_docs():
     """Generuje dokumentację HTML."""
     docs_dir = Path("docs")
     
-    # Utwórz katalog docs jeśli nie istnieje
     docs_dir.mkdir(exist_ok=True)
     
     print("📖 Generuję dokumentację...")
     
     try:
-        # Komenda pdoc do generowania dokumentacji (nowa składnia pdoc 15+)
+        # Komenda pdoc do generowania dokumentacji
         cmd = [
             sys.executable, "-m", "pdoc",
             "--output-directory", str(docs_dir),
@@ -51,13 +50,11 @@ def generate_docs():
         if result.returncode == 0:
             print("✓ Dokumentacja wygenerowana pomyślnie!")
             
-            # Znajdź główny plik HTML
             html_file = docs_dir / "website_analyzer" / "index.html"
             if html_file.exists():
                 print(f"📁 Dokumentacja zapisana w: {html_file.absolute()}")
                 return str(html_file.absolute())
             else:
-                # Spróbuj znaleźć inny główny plik
                 html_files = list(docs_dir.glob("**/*.html"))
                 if html_files:
                     return str(html_files[0].absolute())
@@ -86,22 +83,18 @@ def main():
     print("🚀 Generator dokumentacji Website Analyzer")
     print("=" * 50)
     
-    # Sprawdź czy jesteśmy w odpowiednim katalogu
     if not Path("src/website_analyzer").exists():
         print("❌ Błąd: Nie znaleziono katalogu src/website_analyzer")
         print("   Uruchom skrypt z głównego katalogu projektu")
         sys.exit(1)
     
-    # Krok 1: Zainstaluj pdoc
     if not install_pdoc():
         sys.exit(1)
     
-    # Krok 2: Wygeneruj dokumentację
     html_path = generate_docs()
     if not html_path:
         sys.exit(1)
     
-    # Krok 3: Otwórz w przeglądarce
     if open_docs(html_path):
         print("✅ Gotowe! Dokumentacja otwarta w przeglądarce.")
     else:

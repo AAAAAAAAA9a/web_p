@@ -43,22 +43,20 @@ class MainWindow:
         self.setup_ui()
         
     def setup_theme(self):
-        """Konfiguruje nowoczesny motyw GUI."""
+        """Konfiguruje GUI."""
         style = ttk.Style()
         
-        # Spróbuj użyć nowoczesnego motywu jeśli dostępny
         available_themes = style.theme_names()
         if 'clam' in available_themes:
             style.theme_use('clam')
         elif 'alt' in available_themes:
             style.theme_use('alt')
             
-        # Konfiguruj kolory
         style.configure('TNotebook', borderwidth=0)
         style.configure('TNotebook.Tab', padding=[20, 10])
-        
-        # Konfiguruj styl przycisków
-        style.configure('Accent.TButton', 
+
+        # Konfiguracja przycisków
+        style.configure('Accent.TButton',
                        foreground='white',
                        background='#0078d4',
                        borderwidth=0,
@@ -68,7 +66,6 @@ class MainWindow:
         
     def setup_ui(self):
         """Konfiguruje główny interfejs użytkownika."""
-        # Główny notebook dla zakładek
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill='both', expand=True, padx=10, pady=10)
         

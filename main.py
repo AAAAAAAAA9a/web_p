@@ -15,11 +15,11 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 
-# KROK 1: Dodaj folder 'src' do ścieżki Pythona
+# Dodaj folder 'src' do ścieżki Pythona
 # Dzięki temu Python znajdzie nasze moduły w folderze src/
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-# KROK 2: Próbuj zaimportować główne okno aplikacji
+# Próbuj zaimportować główne okno aplikacji
 try:
     from website_analyzer.gui.main_window import MainWindow
 except ImportError as e:
@@ -40,11 +40,11 @@ def main():
     4. Uruchamia główną pętlę GUI
     """
     try:
-        # KROK 3: Utwórz główne okno aplikacji (tkinter)
+        # Utwórz główne okno aplikacji (tkinter)
         root = tk.Tk()
         app = MainWindow(root)  # MainWindow to nasza główna klasa GUI
         
-        # KROK 4: Wycentruj okno na ekranie (opcjonalne, ale ładnie wygląda)
+        # Wycentruj okno na ekranie
         root.update_idletasks()  # odśwież okno żeby poznać jego rozmiar
         width = root.winfo_width()
         height = root.winfo_height()
@@ -53,7 +53,7 @@ def main():
         y = (root.winfo_screenheight() // 2) - (height // 2)
         root.geometry(f"{width}x{height}+{x}+{y}")
         
-        # KROK 5: Uruchom główną pętlę GUI (aplikacja czeka na interakcję użytkownika)
+        # Uruchom główną pętlę GUI
         root.mainloop()
         
     except Exception as e:
