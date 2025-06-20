@@ -44,6 +44,35 @@ class AnalysisTab:
         self.analysis_progress = ttk.Progressbar(control_frame, mode='indeterminate', length=200)
         self.analysis_progress.pack(side='right')
         
+        # NOWA SEKCJA: Pobieranie zasobów
+        download_section = ttk.LabelFrame(main_container, text="🔽 Download Resource", padding=15)
+        download_section.pack(fill='x', pady=(0, 15))
+        
+        # Rama dla pola URL i przycisku
+        download_frame = ttk.Frame(download_section)
+        download_frame.pack(fill='x')
+        
+        # Pole do wklejenia URL
+        ttk.Label(download_frame, text="Resource URL:").pack(side='left', padx=(0, 5))
+        self.resource_url_var = tk.StringVar()
+        self.resource_url_entry = ttk.Entry(download_frame, textvariable=self.resource_url_var, width=50)
+        self.resource_url_entry.pack(side='left', fill='x', expand=True, padx=(0, 10))
+        
+        # Przycisk pobierania
+        self.download_btn = ttk.Button(download_frame, text="💾 Download", 
+                                     command=self.download_resource)
+        self.download_btn.pack(side='right')
+        
+        # Przycisk do kopiowania URL z analizy
+        self.copy_btn = ttk.Button(download_frame, text="📋 Copy from Analysis", 
+                                  command=self.copy_selected_url)
+        self.copy_btn.pack(side='right', padx=(0, 5))
+        
+        # Informacja o statusie pobierania
+        self.download_status_var = tk.StringVar(value="Ready to download")
+        ttk.Label(download_section, textvariable=self.download_status_var, 
+                 font=('TkDefaultFont', 8)).pack(fill='x', pady=(10, 0))
+        
         # Sekcja wyników analizy
         results_section = ttk.LabelFrame(main_container, text="Analysis Results", padding=10)
         results_section.pack(fill='both', expand=True)
@@ -169,3 +198,125 @@ class AnalysisTab:
                 messagebox.showinfo("Sukces", f"Raport zapisany: {filename}")
             else:
                 messagebox.showerror("Błąd", "Błąd podczas zapisywania raportu")
+                
+    def download_resource(self):
+        """Pobiera zasób z podanego URL na dysk."""
+        import requests
+        import os
+        from urllib.parse import urlparse
+        
+        url = self.resource_url_var.get().strip()
+        if not url:
+            messagebox.showwarning("Warning", "Please enter a resource URL")
+            return
+            
+        # Sprawdź czy URL jest poprawny
+        try:
+            parsed = urlparse(url)
+            if not parsed.scheme or not parsed.netloc:
+                messagebox.showerror("Error", "Invalid URL format")
+                return
+        except Exception:
+            messagebox.showerror("Error", "Invalid URL format")
+            return
+            
+        # Wybór miejsca zapisu
+        try:
+            # Spróbuj odgadnąć nazwę pliku z URL
+            filename = os.path.basename(parsed.path) or "downloaded_resource"
+            if not filename or filename == "/":
+                filename = "downloaded_resource"            # Wybór pliku do zapisu
+            filepath = filedialog.asksaveasfilename(
+                title="Save Resource As",
+                defaultextension=os.path.splitext(filename)[1] or ".bin",
+                filetypes=[
+                    ("All files", "*.*"),
+                    ("Images", "*.jpg *.jpeg *.png *.gif *.svg *.webp"),
+                    ("Documents", "*.pdf *.doc *.docx *.xls *.xlsx"),
+                    ("Media", "*.mp4 *.webm *.mp3 *.wav"),
+                    ("Web files", "*.css *.js *.html")
+                ]
+            )
+            
+            if not filepath:
+                return  # Użytkownik anulował
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"File selection error: {str(e)}")
+            return
+            
+        # Pobierz plik
+        self.download_status_var.set("Downloading...")
+        self.download_btn.config(state='disabled')
+        
+        try:
+            response = requests.get(url, timeout=30, stream=True)
+            response.raise_for_status()
+            
+            # Zapisz plik
+            with open(filepath, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+                        
+            file_size = os.path.getsize(filepath)
+            self.download_status_var.set(f"✅ Downloaded: {os.path.basename(filepath)} ({file_size:,} bytes)")
+            messagebox.showinfo("Success", f"Resource downloaded successfully!\nSaved to: {filepath}")
+            
+        except requests.RequestException as e:
+            self.download_status_var.set(f"❌ Download failed: {str(e)}")
+            messagebox.showerror("Download Error", f"Failed to download resource:\n{str(e)}")
+            
+        except Exception as e:
+            self.download_status_var.set(f"❌ Error: {str(e)}")
+            messagebox.showerror("Error", f"An error occurred:\n{str(e)}")
+            
+        finally:
+            self.download_btn.config(state='normal')
+            
+    def copy_selected_url(self):
+        """Kopiuje wybrany URL z aktualnej zakładki analizy."""
+        # Sprawdź która zakładka jest aktywna
+        current_tab = self.analysis_notebook.select()
+        tab_text = self.analysis_notebook.tab(current_tab, "text")
+        
+        # Określ który widget tekstu użyć
+        if "Statistics" in tab_text:
+            text_widget = self.stats_text
+        elif "Links" in tab_text:
+            text_widget = self.links_text
+        elif "Images" in tab_text:
+            text_widget = self.images_text
+        elif "Media" in tab_text:
+            text_widget = self.media_text
+        elif "Resources" in tab_text:
+            text_widget = self.resources_text
+        elif "Documents" in tab_text:
+            text_widget = self.documents_text
+        else:
+            messagebox.showinfo("Info", "No analysis results available")
+            return
+            
+        # Sprawdź czy jest zaznaczony tekst
+        try:
+            selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST).strip()
+            if selected_text:
+                # Spróbuj wyciągnąć URL z zaznaczonego tekstu
+                import re
+                url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+'
+                urls = re.findall(url_pattern, selected_text)
+                if urls:
+                    self.resource_url_var.set(urls[0])
+                    self.download_status_var.set(f"📋 URL copied: {urls[0][:50]}...")
+                else:
+                    # Jeśli nie ma URL, sprawdź czy to ścieżka relatywna
+                    if selected_text.startswith(('/', './')):
+                        messagebox.showinfo("Info", "Relative path detected. Please add the domain manually.")
+                        self.resource_url_var.set(selected_text)
+                    else:
+                        messagebox.showwarning("Warning", "No valid URL found in selected text")
+            else:
+                messagebox.showinfo("Info", "Please select a URL or file path from the analysis results")
+                
+        except tk.TclError:
+            messagebox.showinfo("Info", "Please select a URL or file path from the analysis results")
