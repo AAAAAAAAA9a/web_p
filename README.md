@@ -1,8 +1,18 @@
 # Analizator Stron Internetowych
 
-**Autor**: [Artur Lisowski, Julia Kusztal]  
-**Przedmiot**: [Aplikacje Sieciowe]  
+**Autor**: [Artur Lisowski, Julia Kusztal]
+**Przedmiot**: [Aplikacje Sieciowe]
 **Rok akademicki**: 2024/2025
+
+## 🚀 Szybki start
+
+```bash
+git clone [adres-repo]
+cd web_p
+python run.py
+```
+
+Jeden skrypt - działa na Windows, Linux i macOS bez żadnych zmian!
 
 ## Opis projektu
 
@@ -47,29 +57,39 @@ pyproject.toml              # Konfiguracja projektu
 
 ## Instalacja i uruchomienie
 
-### Krok 1: Przygotowanie środowiska
+### ⚡ Metoda zalecana - uniwersalna (Windows / Linux / macOS)
 
 ```bash
 # Klonuj projekt
 git clone [adres-repo]
-cd website_analyzer
+cd web_p
 
-# Utwórz środowisko wirtualne
-python -m venv venv
-source venv/bin/activat  # Linux/Mac
-# lub
-venv\Scripts\activate     # Windows
+# Uruchom - jeden skrypt dla wszystkich systemów
+python run.py
 ```
 
-### Krok 2: Instalacja zależności
+**Skrypt `run.py` automatycznie:**
+
+- Sprawdzi czy wymagane pakiety są zainstalowane
+- Zapyta czy zainstalować brakujące zależności (jeśli potrzeba)
+- Uruchomi aplikację
+
+**Zalety:**
+
+- ✅ Działa identycznie na Windows, Linux i macOS
+- ✅ Nie wymaga tworzenia środowiska wirtualnego
+- ✅ Automatycznie instaluje zależności jeśli brakują
+- ✅ Nie wymaga znajomości pip czy venv
+
+### Metoda alternatywna (bez automatycznej instalacji)
+
+Jeśli wolisz ręczną instalację:
 
 ```bash
-pip install -e .
-```
+# Zainstaluj zależności
+pip install requests beautifulsoup4 lxml
 
-### Krok 3: Uruchomienie
-
-```bash
+# Uruchom aplikację
 python main.py
 ```
 
